@@ -46,6 +46,21 @@ public final class DemineurModel {
     private boolean discovered[][];
 
     /**
+     * The number of discovered cells
+     */
+    private int countDiscoveredCells;
+
+    /**
+     * True if the game has been lost, false otherwise
+     */
+    private boolean lost;
+
+    /**
+     * True if the game has been won, false otherwise
+     */
+    private boolean won;
+
+    /**
      * Construct a new Minesweeper model
      * @param width : number of columns
      * @param height : number of rows
@@ -54,12 +69,8 @@ public final class DemineurModel {
         this.WIDTH = width;
         this.HEIGHT = height;
         this.MINES = 5;
-        discovered = new boolean[HEIGHT][WIDTH];
-        for(int i = 0; i < HEIGHT; i++) {
-            for(int j = 0; j < WIDTH; j++) {
-                discovered[i][j] = false;
-            }
-        }
+        lost = false;
+        won = false;
     }
 
     /**
@@ -69,6 +80,8 @@ public final class DemineurModel {
      */
     private void initCells(int i, int j) {
         cells = new Cell[HEIGHT][WIDTH];
+        discovered = new boolean[HEIGHT][WIDTH];
+        countDiscoveredCells = 0;
         int n = 0;
         while(n < MINES) {
             int newMineI = new Random().nextInt(HEIGHT);
@@ -80,6 +93,7 @@ public final class DemineurModel {
         }
         for(i = 0; i < HEIGHT; i++) {
             for(j = 0; j < WIDTH; j++) {
+                discovered[i][j] = false;
                 if(cells[i][j] != Cell.MINE) {
                     switch(countAdjacentMines(i, j)) {
                         case 0 : cells[i][j] = Cell.EMPTY; break;
@@ -115,6 +129,24 @@ public final class DemineurModel {
     }
 
     /**
+     *
+     * @return true if none move has been done yet
+     */
+    private boolean isFirstMove() {
+        return cells == null;
+    }
+
+    /**
+     *
+     * @param i : the cell row
+     * @param j : the cell column
+     * @return true if the (i, j) cell has been discovered
+     */
+    private boolean isDiscovered(int i, int j) {
+        return discovered[i][j];
+    }
+
+    /**
      * Calculate the number of adjacent mines around the given cell
      * @param i : the cell row
      * @param j : the cell column
@@ -137,6 +169,79 @@ public final class DemineurModel {
             }
         }
         return count;
+    }
+
+    /**
+     * Makes the (i, j) cell become a discovered cell
+     * @param i : the cell row
+     * @param j : the cell column
+     */
+    private void setDiscovered(int i, int j) {
+        /*if(isDiscovered(i, j))
+            return;*/
+        discovered[i][j] = true;
+        countDiscoveredCells++;
+    }
+
+    /**
+     * An empty cell has been discovered, looks for adjacent empty cells
+     * @param i : the cell row
+     * @param j : the column row
+     */
+    private void setAdjacentEmptyDiscovered(int i, int j) {
+        if(isDiscovered(i, j))
+            return;
+        setDiscovered(i, j);
+        for(int m = -1; m <= 1; m++) {
+            for(int n = -1; n <= 1; n++) {
+                if(m == 0 && n == 0)
+                    continue;
+                try {
+                    Cell c = cells[m + i][n + j];
+                    switch(c) {
+                        case MINE : assert(false); //System.err.println("ERROR : invalid grid"); System.exit(-1);
+                        case EMPTY : setAdjacentEmptyDiscovered(m + i, n + j); break;
+                        default : setDiscovered(m + i, n + j); break;
+                    }
+                }
+                catch(IndexOutOfBoundsException e) {
+                    continue;
+                }
+            }
+        }
+    }
+
+    /**
+     * Plays in the cell (i, j)
+     * @param i : the cell row
+     * @param j : the cell column
+     */
+    public void move(int i, int j) {
+        if(isFirstMove())
+            initCells(i, j);
+        if(discovered[i][j])
+            return;
+        switch(cells[i][j]) {
+            case MINE : setDiscovered(i, j); setLost(); break;
+            case EMPTY : setAdjacentEmptyDiscovered(i, j); break;
+            default : setDiscovered(i, j); break;
+        }
+        if(countDiscoveredCells == HEIGHT * WIDTH - MINES)
+            setWon();
+    }
+
+    /**
+     * The game has been lost
+     */
+    private void setLost() {
+        this.lost = true;
+    }
+
+    /**
+     * The game has been won
+     */
+    private void setWon() {
+        this.lost = true;
     }
 
 }
