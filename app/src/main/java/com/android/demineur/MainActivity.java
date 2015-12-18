@@ -12,7 +12,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.grid_layout);
-        model = new DemineurModel(20, 20);
+        model = new DemineurModel(11, 11);
         GridView gridView = (GridView) findViewById(R.id.gridId);
         gridView.setNumColumns(model.getWidth());
         DemineurAdapter demineurAdapter = new DemineurAdapter(this, model);

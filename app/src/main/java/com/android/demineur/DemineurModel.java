@@ -68,7 +68,8 @@ public final class DemineurModel {
     public DemineurModel(int width, int height) {
         this.WIDTH = width;
         this.HEIGHT = height;
-        this.MINES = 5;
+        this.MINES = 28;
+        discovered = new boolean[HEIGHT][WIDTH];
         lost = false;
         won = false;
     }
@@ -80,7 +81,6 @@ public final class DemineurModel {
      */
     private void initCells(int i, int j) {
         cells = new Cell[HEIGHT][WIDTH];
-        discovered = new boolean[HEIGHT][WIDTH];
         countDiscoveredCells = 0;
         int n = 0;
         while(n < MINES) {
@@ -142,8 +142,30 @@ public final class DemineurModel {
      * @param j : the cell column
      * @return true if the (i, j) cell has been discovered
      */
-    private boolean isDiscovered(int i, int j) {
+    public boolean isDiscovered(int i, int j) {
         return discovered[i][j];
+    }
+
+    /**
+     *
+     * @return true if the game is lost
+     */
+    public boolean isLost() {
+        return lost;
+    }
+
+    public boolean isWon() {
+        return won;
+    }
+
+    /**
+     *
+     * @param i : the cell row
+     * @param j : the cell column
+     * @return the (i, j) cell content
+     */
+    public Cell getCell(int i, int j) {
+        return cells[i][j];
     }
 
     /**
