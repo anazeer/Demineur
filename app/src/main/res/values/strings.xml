@@ -1,9 +1,16 @@
 <resources>
     <string name="app_name">Demineur</string>
+    <string name="settings">Settings</string>
     <string name="dialog_replay">Do you want to replay ?</string>
     <string name="result">You %1$s!</string>
+    <string name="new_game">New game</string>
     <string name="lost">lost</string>
     <string name="won">won</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="accept">Accept</string>
+    <string name="cancel">Cancel</string>
+    <string name="width">Width: </string>
+    <string name="height">Height: </string>
+    <string name="mines">Mines: </string>
 </resources>

@@ -5,6 +5,30 @@ import java.util.Random;
 public final class DemineurModel {
 
     /**
+     * Min columns for a grid
+     */
+    public static final int MIN_WIDTH = 5;
+
+    /**
+     * Min rows for a grid
+     */
+    public static final int MIN_HEIGHT = 5;
+
+    /**
+     * Min number of mines
+     */
+    public static final int MIN_MINES = 5;
+
+    /**
+     * Max columns for a grid
+     */
+    public static final int MAX_WIDTH = 20;
+    /**
+     * Max rows for a grid
+     */
+    public static final int MAX_HEIGHT = 20;
+
+    /**
      * Cell content for the grid
      */
     public enum Cell {
@@ -64,14 +88,24 @@ public final class DemineurModel {
      * Construct a new Minesweeper model
      * @param width : number of columns
      * @param height : number of rows
+     * @param mines : number of mines
      */
-    public DemineurModel(int width, int height) {
+    public DemineurModel(int width, int height, int mines) {
         this.WIDTH = width;
         this.HEIGHT = height;
-        this.MINES = 28;
+        this.MINES = mines;
         discovered = new boolean[HEIGHT][WIDTH];
         lost = false;
         won = false;
+    }
+
+    /**
+     * Construct a new Minesweeper model
+     * @param width : number of columns
+     * @param height : number of rows
+     */
+    public DemineurModel(int width, int height) {
+        this(width, height, width + height/2);
     }
 
     /**
@@ -126,6 +160,14 @@ public final class DemineurModel {
      */
     public int getHeight() {
         return HEIGHT;
+    }
+
+    /**
+     *
+     * @return the number of mines
+     */
+    public int getMines() {
+        return MINES;
     }
 
     /**
