@@ -1,21 +1,34 @@
 package com.android.demineur;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 public class DemineurAdapter extends BaseAdapter {
 
     private Context context;
     private DemineurModel model;
+    private AlertDialog.Builder dialog;
+    private Resources r;
+    private GridView gridView;
 
-    public DemineurAdapter(Context context, DemineurModel model) {
+    public DemineurAdapter(Context context, DemineurModel model, GridView gridView) {
         super();
         this.context = context;
         this.model = model;
+        this.gridView = gridView;
+        dialog = new AlertDialog.Builder(context);
+        r = context.getResources();
+        dialog.setMessage(r.getString(R.string.dialog_replay)).setPositiveButton(r.getString(R.string.yes), dialogListener).setNegativeButton(r.getString(R.string.no), dialogListener);
     }
 
     @Override
@@ -93,13 +106,44 @@ public class DemineurAdapter extends BaseAdapter {
                     model.move(i, j);
                     //Toast.makeText(context, "(" + position / model.getWidth() + ", " + position % model.getHeight() + ")", Toast.LENGTH_SHORT).show();
                     //DemineurAdapter.this.notifyDataSetChanged();
-                    gridView.setAdapter(new DemineurAdapter(DemineurAdapter.this.context, model));
+                    if(model.isLost() || model.isWon()) {
+                        String result = model.isWon() ? r.getString(R.string.won) : r.getString(R.string.lost);
+                        Toast.makeText(context, r.getString(R.string.result, result), Toast.LENGTH_SHORT).show();
+                        dialog.setTitle(r.getString(R.string.result, result));
+                        dialog.show();
+                    }
+                    gridView.setAdapter(new DemineurAdapter(DemineurAdapter.this.context, model, gridView));
                 }
             });
         }
         else
             imageButton = (ImageButton) convertView;
+        if(model.isLost() || model.isWon()) {
+            imageButton.setClickable(false);
+        }
         return imageButton;
     }
+
+    private void newGame(GridView gridView) {
+        model = new DemineurModel(model.getWidth(), model.getHeight());
+        gridView.setAdapter(new DemineurAdapter(context, model, gridView));
+        gridView.setNumColumns(model.getWidth());
+        Animation animation = AnimationUtils.loadAnimation(context, R.anim.move);
+        gridView.startAnimation(animation);
+    }
+
+    DialogInterface.OnClickListener dialogListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which) {
+                case DialogInterface.BUTTON_POSITIVE:
+                    newGame(gridView);
+                    break;
+                case DialogInterface.BUTTON_NEGATIVE:
+                    dialog.dismiss();
+                    break;
+            }
+        }
+    };
 
 }
