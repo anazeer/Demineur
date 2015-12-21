@@ -125,7 +125,7 @@ public class DemineurAdapter extends BaseAdapter {
     }
 
     private void newGame(GridView gridView) {
-        model = new DemineurModel(model.getWidth(), model.getHeight());
+        model = new DemineurModel(model.getWidth(), model.getHeight(), model.getMines());
         gridView.setAdapter(new DemineurAdapter(context, model, gridView));
         gridView.setNumColumns(model.getWidth());
         Animation animation = AnimationUtils.loadAnimation(context, R.anim.move);

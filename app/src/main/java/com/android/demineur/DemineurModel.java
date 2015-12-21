@@ -17,7 +17,7 @@ public final class DemineurModel {
     /**
      * Min number of mines
      */
-    public static final int MIN_MINES = 5;
+    public static final int MIN_MINES = 2;
 
     /**
      * Max columns for a grid
@@ -241,8 +241,8 @@ public final class DemineurModel {
      * @param j : the cell column
      */
     private void setDiscovered(int i, int j) {
-        /*if(isDiscovered(i, j))
-            return;*/
+        if(isDiscovered(i, j))
+            return;
         discovered[i][j] = true;
         countDiscoveredCells++;
     }
@@ -305,7 +305,7 @@ public final class DemineurModel {
      * The game has been won
      */
     private void setWon() {
-        this.lost = true;
+        this.won = true;
     }
 
 }
