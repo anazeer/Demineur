@@ -55,6 +55,8 @@ public class DemineurAdapter extends BaseAdapter {
             imageButton = new ImageButton(context);
             final int i = position / model.getWidth();
             final int j = position % model.getHeight();
+            //System.err.println("ADAPT : width = " + model.getWidth() + ", height = " + model.getHeight());
+            //System.err.println("ADAPT : i = " + i + ", j = " + j);
             if((model.isLost() || model.isWon()) && model.getCell(i, j) == DemineurModel.Cell.MINE && !model.isDiscovered(i, j))
                 imageButton.setImageResource(R.drawable.case_mine); // show all the mines if the game is lost
             else if(!model.isDiscovered(i, j)) {
@@ -145,5 +147,6 @@ public class DemineurAdapter extends BaseAdapter {
             }
         }
     };
+
 
 }

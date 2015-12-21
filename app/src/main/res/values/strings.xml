@@ -13,4 +13,6 @@
     <string name="width">Width: </string>
     <string name="height">Height: </string>
     <string name="mines">Mines: </string>
+    <string name="timer">  00 : 00</string>
+    <string name="number_of_mines">  0</string>
 </resources>

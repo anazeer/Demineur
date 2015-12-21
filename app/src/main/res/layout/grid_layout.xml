@@ -20,6 +20,7 @@
             android:id="@+id/flagButtonId"
             android:src="@drawable/just_flag"
             android:layout_alignParentLeft="true"
+            android:layout_marginLeft="15dp"
             android:background="@android:color/transparent" />
 
         <TextView
@@ -29,7 +30,7 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:drawableLeft="@drawable/horloge"
-            android:text=" 00 : 00 "
+            android:text="@string/timer"
             android:gravity="center_vertical" />
 
         <TextView
@@ -38,9 +39,10 @@
             android:layout_centerVertical="true"
             android:id="@+id/minesId"
             android:drawableLeft="@drawable/bombe"
-            android:text=" 0 "
+            android:text="@string/number_of_mines"
             android:gravity="center_vertical"
-            android:layout_alignParentRight="true"/>
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="15dp"/>
 
     </RelativeLayout>
 
@@ -48,8 +50,7 @@
         android:id="@+id/gridId"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/datasId"
-        android:layout_centerInParent="true"
-        >
+        android:layout_below="@+id/datasId"
+        android:layout_marginTop="20dp">
     </GridView>
 </RelativeLayout>

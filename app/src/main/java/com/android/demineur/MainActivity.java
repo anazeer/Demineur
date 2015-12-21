@@ -2,6 +2,8 @@ package com.android.demineur;
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -29,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView widthValueText;
     private TextView heightValueText;
     private TextView minesValueText;
+    private long startTime = 0L;
+    private Handler customHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +98,8 @@ public class MainActivity extends AppCompatActivity {
         gridView.setAdapter(new DemineurAdapter(this, model, gridView));
         gridView.setNumColumns(model.getWidth());
         gridView.startAnimation(animation);
+        startTime = SystemClock.uptimeMillis();
+        customHandler.postDelayed(updateTimerThread, 0);
     }
 
     SeekBar.OnSeekBarChangeListener seekBarListener = new SeekBar.OnSeekBarChangeListener() {
@@ -133,5 +139,21 @@ public class MainActivity extends AppCompatActivity {
                 dialog.dismiss();
             }
         }
+    };
+
+    private Runnable updateTimerThread = new Runnable() {
+
+        public void run() {
+
+            long timeInMilliseconds = SystemClock.uptimeMillis() - startTime;
+
+            int secs = (int) (timeInMilliseconds / 1000);
+            int mins = secs / 60;
+            secs = secs % 60;
+            TextView timer = (TextView) findViewById(R.id.timeId);
+            timer.setText("  " + mins + " : " + String.format("%02d", secs));
+            customHandler.postDelayed(this, 0);
+        }
+
     };
 }
