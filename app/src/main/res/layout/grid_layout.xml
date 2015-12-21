@@ -7,11 +7,48 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin" >
 
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/datasId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop = "true">
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:id="@+id/flagButtonId"
+            android:src="@drawable/just_flag"
+            android:layout_alignParentLeft="true"
+            android:background="@android:color/transparent" />
+
+        <TextView
+            android:id="@+id/timeId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:drawableLeft="@drawable/horloge"
+            android:text=" 00 : 00 "
+            android:gravity="center_vertical" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:id="@+id/minesId"
+            android:drawableLeft="@drawable/bombe"
+            android:text=" 0 "
+            android:gravity="center_vertical"
+            android:layout_alignParentRight="true"/>
+
+    </RelativeLayout>
 
     <GridView
         android:id="@+id/gridId"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@id/datasId"
         android:layout_centerInParent="true"
         >
     </GridView>
