@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
                 setNegativeButton(getResources().getString(R.string.no), settingsDialogListener);
         customHandler = new Handler();
         startTime = 0L;
-        newGame(11, 11, 28);
+        newGame(11, 11, 20);
         initSettingsDialog();
     }
 
