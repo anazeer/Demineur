@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/heightSeekBarSettingsId"
         android:layout_alignRight="@+id/widthSeekBarSettingsId"
-        android:text=""
+        android:text="@string/width_value"
         android:layout_alignEnd="@+id/widthSeekBarSettingsId">
     </TextView>
 
@@ -55,7 +55,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/widthValueId"
         android:layout_alignRight="@+id/widthSeekBarSettingsId"
-        android:layout_alignEnd="@+id/widthSeekBarSettingsId">
+        android:layout_alignEnd="@+id/widthSeekBarSettingsId"
+        android:text="@string/height_value">
     </TextView>
 
     <TextView
@@ -82,7 +83,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/heightValueId"
         android:layout_alignRight="@+id/widthSeekBarSettingsId"
-        android:layout_alignEnd="@+id/widthSeekBarSettingsId">
+        android:layout_alignEnd="@+id/widthSeekBarSettingsId"
+        android:text="@string/mines_value">
     </TextView>
 
     <Button
