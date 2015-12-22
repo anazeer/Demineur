@@ -324,7 +324,7 @@ public final class DemineurModel {
      * @param j : the cell column
      */
     private void setDiscovered(int i, int j) {
-        if(isDiscovered(i, j))
+        if(isDiscovered(i, j) || isMarked(i, j))
             return;
         discovered[i][j] = true;
         countDiscoveredCells++;
@@ -336,7 +336,7 @@ public final class DemineurModel {
      * @param j : the column row
      */
     private void setAdjacentEmptyDiscovered(int i, int j) {
-        if(isDiscovered(i, j))
+        if(isDiscovered(i, j) || isMarked(i, j))
             return;
         setDiscovered(i, j);
         for(int m = -1; m <= 1; m++) {
