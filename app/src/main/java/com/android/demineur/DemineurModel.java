@@ -382,6 +382,8 @@ public final class DemineurModel {
             setMarked(i, j);
             return;
         }
+        if(isMarked(i, j))
+            return;
         switch(cells[i][j]) {
             case MINE : setDiscovered(i, j); setLost(); break;
             case EMPTY : setAdjacentEmptyDiscovered(i, j); break;
