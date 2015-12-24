@@ -3,6 +3,7 @@ package com.android.demineur;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -15,10 +16,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.GridView;
+import android.widget.GridLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,7 +27,7 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
 
     private DemineurModel model;
-    private GridView gridView;
+    private GridLayout gridLayout;
     private Animation animation;
     private SeekBar widthSeekBar;
     private SeekBar heightSeekBar;
@@ -47,8 +48,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.grid_layout);
         animation = AnimationUtils.loadAnimation(this, R.anim.move);
-        gridView = (GridView) findViewById(R.id.gridId);
-        gridView.setOnItemClickListener(gridListener);
+        gridLayout = (GridLayout) findViewById(R.id.gridId);
         flagButton = (ImageButton) findViewById(R.id.flagButtonId);
         flagButton.setOnClickListener(setFlagModeListener);
         minesCountText = (TextView) findViewById(R.id.minesId);
@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
                 setNegativeButton(getResources().getString(R.string.no), settingsDialogListener);
         customHandler = new Handler();
         startTime = 0L;
-        newGame(11, 11, 20);
+        newGame(5, 5, 4);
         initSettingsDialog();
     }
 
@@ -92,13 +92,31 @@ public class MainActivity extends AppCompatActivity {
 
     public void newGame(int width, int height, int mines) {
         model = new DemineurModel(width, height, mines);
-        gridView.setAdapter(new DemineurAdapter(this, model));
-        gridView.setNumColumns(model.getWidth());
-        gridView.setOnItemClickListener(gridListener);
-        gridView.startAnimation(animation);
+        initGrid();
+        gridLayout.startAnimation(animation);
         minesCountText.setText(getResources().getString(R.string.count_mines, model.getRemainingCountMines()));
+        flagButton.setBackgroundResource(R.color.gameBackground);
         startTime = SystemClock.uptimeMillis();
         customHandler.postDelayed(updateTimerThread, 0);
+    }
+
+    private void initGrid() {
+        gridLayout.removeAllViews();
+        //gridLayout.setHorizontalScrollBarEnabled(true);
+        //gridLayout.setVerticalScrollBarEnabled(true);
+        gridLayout.setColumnCount(model.getWidth());
+        gridLayout.setRowCount(model.getHeight());
+        for(int i = 0; i < model.getHeight(); i++) {
+            for(int j = 0; j < model.getWidth(); j++) {
+                ImageView imageView = new ImageView(this);
+                imageView.setImageResource(R.drawable.case_normale);
+                imageView.setPadding(0, 0, 0, 0);
+                imageView.setAdjustViewBounds(true);
+                imageView.setTag(i + "-" + j);
+                imageView.setOnClickListener(cellListener);
+                gridLayout.addView(imageView, i * model.getWidth() + j);
+            }
+        }
     }
 
     @Override
@@ -171,25 +189,11 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             model.setFlagMode(!model.isFlagMode());
-        }
-    };
 
-    AdapterView.OnItemClickListener gridListener = new AdapterView.OnItemClickListener() {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            final int i = position / model.getWidth();
-            final int j = position % model.getHeight();
-            model.move(i, j);
-            minesCountText.setText(getResources().getString(R.string.count_mines, model.getRemainingCountMines()));
-            if (model.isLost() || model.isWon()) {
-                String result = model.isWon() ? getResources().getString(R.string.won) : getResources().getString(R.string.lost);
-                Toast.makeText(MainActivity.this, getResources().getString(R.string.result, result), Toast.LENGTH_SHORT).show();
-                replayDialog.setTitle(getResources().getString(R.string.result, result));
-                replayDialog.show();
-                gridView.setOnItemClickListener(null);
-            }
-            //DemineurAdapter.this.notifyDataSetChanged();
-            gridView.setAdapter(new DemineurAdapter(MainActivity.this, model));
+            if(model.isFlagMode())
+                flagButton.setBackgroundResource(R.color.flagPressed);
+            else
+                flagButton.setBackgroundResource(R.color.gameBackground);
         }
     };
 
@@ -206,5 +210,79 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
+
+    View.OnClickListener cellListener = new View.OnClickListener(){
+        @Override
+        public void onClick(View v) {
+            ImageView imageView = (ImageView) v;
+            String[] position = ((String) imageView.getTag()).split("-");
+            int i = Integer.parseInt(position[0] + "");
+            int j = Integer.parseInt(position[1] + "");
+            model.move(i, j);
+            minesCountText.setText(getResources().getString(R.string.count_mines, model.getRemainingCountMines()));
+            updateGrid();
+        }
+
+    };
+
+    private void updateGrid() {
+        for(int i = 0; i < model.getHeight(); i++) {
+            for (int j = 0; j < model.getWidth(); j++) {
+                ImageView imageView = (ImageView) gridLayout.getChildAt(i * model.getWidth() + j);
+                if(model.isMarked(i, j))
+                    imageView.setImageResource(R.drawable.case_marquee_minee);
+                else if(!model.isDiscovered(i, j)) {
+                    imageView.setImageResource(R.drawable.case_normale);
+                }
+                else {
+                    switch(model.getCell(i, j)) {
+                        case MINE:
+                            assert(false);
+                        case EMPTY:
+                            imageView.setImageResource(R.drawable.case_0);
+                            break;
+                        case ONE:
+                            imageView.setImageResource(R.drawable.case_1);
+                            break;
+                        case TWO:
+                            imageView.setImageResource(R.drawable.case_2);
+                            break;
+                        case THREE:
+                            imageView.setImageResource(R.drawable.case_3);
+                            break;
+                        case FOUR:
+                            imageView.setImageResource(R.drawable.case_4);
+                            break;
+                        case FIVE:
+                            imageView.setImageResource(R.drawable.case_5);
+                            break;
+                        case SIX:
+                            imageView.setImageResource(R.drawable.case_6);
+                            break;
+                        case SEVEN:
+                            imageView.setImageResource(R.drawable.case_7);
+                            break;
+                        case EIGHT:
+                            imageView.setImageResource(R.drawable.case_8);
+                            break;
+                    }
+                }
+                if((model.isLost() || model.isWon()) ) {
+                    if(model.getCell(i, j) == DemineurModel.Cell.MINE)
+                        if (!model.isDiscovered(i, j))
+                            imageView.setImageResource(R.drawable.case_mine); // show all the mines if the game is lost
+                        else
+                         imageView.setImageResource(R.drawable.case_mine_explosee); // the player lost here
+                    imageView.setClickable(false);
+                }
+            }
+        }
+        if (model.isLost() || model.isWon()) {
+            String result = model.isWon() ? getResources().getString(R.string.won) : getResources().getString(R.string.lost);
+            Toast.makeText(MainActivity.this, getResources().getString(R.string.result, result), Toast.LENGTH_SHORT).show();
+            replayDialog.setTitle(getResources().getString(R.string.result, result));
+            replayDialog.show();
+        }
+    }
 
 }
