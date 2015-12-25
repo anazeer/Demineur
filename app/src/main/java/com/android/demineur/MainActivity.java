@@ -26,6 +26,7 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
 
     private DemineurModel model;
+    private DemineurAdapter adapter;
     private GridView gridView;
     private Animation animation;
     private SeekBar widthSeekBar;
@@ -92,7 +93,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void newGame(int width, int height, int mines) {
         model = new DemineurModel(width, height, mines);
-        gridView.setAdapter(new DemineurAdapter(this, model));
+        adapter = new DemineurAdapter(this, model);
+        gridView.setAdapter(adapter);
         gridView.setNumColumns(model.getWidth());
         gridView.setOnItemClickListener(gridListener);
         gridView.startAnimation(animation);
@@ -189,7 +191,9 @@ public class MainActivity extends AppCompatActivity {
                 gridView.setOnItemClickListener(null);
             }
             //DemineurAdapter.this.notifyDataSetChanged();
-            gridView.setAdapter(new DemineurAdapter(MainActivity.this, model));
+            gridView.setAdapter(adapter);
+            //adapter.notifyDataSetChanged();
+            //gridView.invalidateViews();
         }
     };
 

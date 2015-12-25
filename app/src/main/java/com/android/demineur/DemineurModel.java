@@ -218,6 +218,9 @@ public final class DemineurModel {
      * @return true if the (i, j) cell has been marked
      */
     public boolean isMarked(int i, int j) {
+        //System.err.println("MODEL : width = " + WIDTH + ", height = " + HEIGHT);
+        //System.err.println("MODEL : i = " + i + ", j = " + j);
+        //System.err.println("MODEL : discover length = width " + discovered[0].length + ", height " + discovered.length);
         return marked[i][j];
     }
 
