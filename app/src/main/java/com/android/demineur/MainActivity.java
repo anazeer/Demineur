@@ -268,9 +268,12 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 if((model.isLost() || model.isWon()) ) {
-                    if(model.getCell(i, j) == DemineurModel.Cell.MINE)
+                    DemineurModel.Cell cel = model.getCell(i, j);
+                    if((cel != DemineurModel.Cell.MINE) && model.isMarked(i, j))
+                        imageView.setImageResource(R.drawable.wrong_flag); // the player put a flag whereas there were no mine
+                    else if(cel == DemineurModel.Cell.MINE)
                         if (!model.isDiscovered(i, j))
-                            imageView.setImageResource(R.drawable.case_mine); // show all the mines if the game is lost
+                            imageView.setImageResource(R.drawable.case_mine); // show all the mines if the game is over
                         else
                          imageView.setImageResource(R.drawable.case_mine_explosee); // the player lost here
                     imageView.setClickable(false);

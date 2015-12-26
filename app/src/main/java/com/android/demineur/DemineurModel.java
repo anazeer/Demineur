@@ -149,7 +149,7 @@ public final class DemineurModel {
             for(j = 0; j < WIDTH; j++) {
                 discovered[i][j] = false;
                 if(cells[i][j] != Cell.MINE) {
-                    switch(countAdjacentMines(i, j)) {
+                    switch(countAdjacent(i, j, false)) {
                         case 0 : cells[i][j] = Cell.EMPTY; break;
                         case 1 : cells[i][j] = Cell.ONE; break;
                         case 2 : cells[i][j] = Cell.TWO; break;
@@ -297,21 +297,21 @@ public final class DemineurModel {
     }
 
     /**
-     * Calculate the number of adjacent mines around the given cell
+     * Calculate the number of a specific content (flag or mine) of cells around the given cell
      * @param i : the cell row
      * @param j : the cell column
-     * @return the number of adjacent mines
+     * @param flag : true if the cell content comparison must be done with a flg, false for a mine
+     * @return the number of adjacent cells that contains flag or mine depending on flag value
      */
-    private int countAdjacentMines(int i, int j) {
+    private int countAdjacent(int i, int j, boolean flag) {
         int count = 0;
         for(int m = -1; m <= 1; m++) {
             for(int n = -1; n <= 1; n++) {
                 if(m == 0 && n == 0)
                     continue;
                 try {
-                    if(cells[i+m][j+n] == Cell.MINE) {
+                    if(flag ? isMarked(i+m, j+n) : cells[i+m][j+n] == Cell.MINE)
                         count++;
-                    }
                 }
                 catch(IndexOutOfBoundsException e) {
                     continue;
@@ -376,17 +376,12 @@ public final class DemineurModel {
      * @param i : the cell row
      * @param j : the cell column
      */
-    public void move(int i, int j) {
+    private void basicMove(int i, int j) {
         if(isFirstMove())
             initCells(i, j);
-        if(discovered[i][j])
-            return;
-        if(isFlagMode()) {
-            setMarked(i, j);
+        if(discovered[i][j]) {
             return;
         }
-        if(isMarked(i, j))
-            return;
         switch(cells[i][j]) {
             case MINE : setDiscovered(i, j); setLost(); return;
             case EMPTY : setAdjacentEmptyDiscovered(i, j); break;
@@ -394,5 +389,45 @@ public final class DemineurModel {
         }
         if(countDiscoveredCells == HEIGHT * WIDTH - MINES)
             setWon();
+    }
+
+    /**
+     * Makes all the non-discovered adjacent cells of a discovered cell become discovered
+     * The number of adjacent flags must be the same that the (i, j) cell's number
+     * The player can lose if he marked a wrong cell
+     * @param i : the cell row
+     * @param j : the cell column
+     */
+    private void discoveredMove(int i, int j) {
+        for(int m = -1; m <= 1; m++) {
+            for(int n = -1; n <= 1; n++) {
+                if(m == 0 && n == 0)
+                    continue;
+                try {
+                    if(!isMarked(m + i,  n + j))
+                        basicMove(m + i, n + j);
+                }
+                catch(IndexOutOfBoundsException e) {
+                    continue;
+                }
+            }
+        }
+    }
+    /**
+     * Makes the grid changes depending on the player's move's type
+     * @param i : the cell row
+     * @param j : the cell column
+     */
+    public void move(int i, int j) {
+        if(isFlagMode() && !isDiscovered(i, j)) {
+            setMarked(i, j);
+            return;
+        }
+        else if(isMarked(i, j))
+            return;
+        if(isDiscovered(i, j) && countAdjacent(i, j, true) == cells[i][j].ordinal() - 1)
+            discoveredMove(i, j);
+        else
+            basicMove(i, j);
     }
 }
