@@ -12,27 +12,10 @@
         android:id="@+id/datasId"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginLeft="16dp"
         android:layout_alignParentTop = "true">
-
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:id="@+id/flagButtonId"
-            android:src="@drawable/just_flag"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="15dp"
-            android:background="@android:color/transparent"/>
-
-        <TextView
-            android:id="@+id/timeId"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:drawableLeft="@drawable/horloge"
-            android:text="@string/timer"
-            android:gravity="center_vertical" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -42,8 +25,34 @@
             android:drawableLeft="@drawable/bombe"
             android:text="@string/count_mines"
             android:gravity="center_vertical"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="15dp"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:textSize="18sp"/>
+
+        <TextView
+            android:id="@+id/timeId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:drawableLeft="@drawable/horloge"
+            android:text="@string/timer"
+            android:gravity="center_vertical"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:textSize="18sp"/>
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:id="@+id/flagButtonId"
+            android:src="@drawable/just_flag"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="15dp"/>
+            android:layout_marginRight="15dp"
+            android:background="@android:color/transparent"/>
 
     </RelativeLayout>
 
@@ -55,11 +64,11 @@
         android:layout_below="@id/datasId">
             <HorizontalScrollView
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content">
                 <GridLayout
                     android:id="@+id/gridId"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
                 </GridLayout>
         </HorizontalScrollView>
     </ScrollView>
