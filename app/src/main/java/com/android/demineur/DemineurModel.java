@@ -300,7 +300,7 @@ public final class DemineurModel {
      * Calculate the number of a specific content (flag or mine) of cells around the given cell
      * @param i : the cell row
      * @param j : the cell column
-     * @param flag : true if the cell content comparison must be done with a flg, false for a mine
+     * @param flag : true if the cell content comparison must be done with a flag, false for a mine
      * @return the number of adjacent cells that contains flag or mine depending on flag value
      */
     private int countAdjacent(int i, int j, boolean flag) {

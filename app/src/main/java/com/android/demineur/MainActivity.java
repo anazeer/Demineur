@@ -24,6 +24,8 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Random;
+
 public class MainActivity extends AppCompatActivity {
 
     private DemineurModel model;
@@ -87,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         minesSeekBar.setProgress(model.getMines());
         widthSeekBar.setMax(DemineurModel.MAX_WIDTH);
         heightSeekBar.setMax(DemineurModel.MAX_HEIGHT);
-        minesSeekBar.setMax(model.getHeight() * model.getWidth() - (model.getHeight() + model.getHeight()));
+        minesSeekBar.setMax(model.getHeight() * model.getWidth() - (model.getHeight() + model.getWidth()));
     }
 
     public void newGame(int width, int height, int mines) {
@@ -130,9 +132,25 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.newGameMenuId:
-                newGame(model.getWidth(), model.getHeight(), model.getMines());
+            case R.id.newBeginnerMenuId:
+                newGame(9, 9, 10);
                 return true;
+            case R.id.newIntermediateMenuId:
+                newGame(16, 16, 40);
+                return true;
+            case R.id.newExpertMenuId:
+                newGame(30, 16, 99);
+                return true;
+            case R.id.newRandomMenuId:
+                Random rand = new Random();
+                int height = rand.nextInt(DemineurModel.MAX_HEIGHT - DemineurModel.MIN_HEIGHT) + DemineurModel.MIN_HEIGHT;
+                int width = rand.nextInt(DemineurModel.MAX_WIDTH - DemineurModel.MIN_WIDTH) + DemineurModel.MIN_WIDTH;
+                int mines = rand.nextInt(height * width - (height + width) - DemineurModel.MIN_MINES) + DemineurModel.MIN_MINES;
+                newGame(height, width, mines);
+                return true;
+            case R.id.newCustomMenuId:
+                settingsDialog.show();
+                break;
             case R.id.settingsMenuId:
                 settingsDialog.show();
                 break;
