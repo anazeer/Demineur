@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         minesSeekBar.setProgress(model.getMines());
         widthSeekBar.setMax(DemineurModel.MAX_WIDTH);
         heightSeekBar.setMax(DemineurModel.MAX_HEIGHT);
-        minesSeekBar.setMax(model.getHeight() * model.getWidth() - (model.getHeight() + model.getWidth()));
+        minesSeekBar.setMax(model.getMaxMines(model.getHeight(), model.getWidth()));
     }
 
     public void newGame(int width, int height, int mines) {
@@ -145,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
                 Random rand = new Random();
                 int height = rand.nextInt(DemineurModel.MAX_HEIGHT - DemineurModel.MIN_HEIGHT) + DemineurModel.MIN_HEIGHT;
                 int width = rand.nextInt(DemineurModel.MAX_WIDTH - DemineurModel.MIN_WIDTH) + DemineurModel.MIN_WIDTH;
-                int mines = rand.nextInt(height * width - (height + width) - DemineurModel.MIN_MINES) + DemineurModel.MIN_MINES;
+                int mines = rand.nextInt(model.getMaxMines(height, width) - DemineurModel.MIN_MINES) + DemineurModel.MIN_MINES;
                 newGame(height, width, mines);
                 return true;
             case R.id.newCustomMenuId:
@@ -167,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
                 heightValueText.setText(getResources().getString(R.string.height_value, progress));
             else if(seekBar.getId() == R.id.minesSeekBarSettingsId)
                 minesValueText.setText(getResources().getString(R.string.mines_value, progress));
-            minesSeekBar.setMax(widthSeekBar.getProgress() * heightSeekBar.getProgress() - (widthSeekBar.getProgress() + heightSeekBar.getProgress()));
+            minesSeekBar.setMax(model.getMaxMines(heightSeekBar.getProgress(), widthSeekBar.getProgress()));
         }
         @Override
         public void onStartTrackingTouch(SeekBar seekBar) {}

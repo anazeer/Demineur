@@ -23,6 +23,7 @@ public final class DemineurModel {
      * Max columns for a grid
      */
     public static final int MAX_WIDTH = 20;
+
     /**
      * Max rows for a grid
      */
@@ -135,21 +136,22 @@ public final class DemineurModel {
      */
     private void initCells(int i, int j) {
         cells = new Cell[HEIGHT][WIDTH];
+        System.out.println(cells[1][1]);
         countDiscoveredCells = 0;
         int n = 0;
         while(n < MINES) {
             int newMineI = new Random().nextInt(HEIGHT);
             int newMineJ = new Random().nextInt(WIDTH);
-            if((newMineI != i || newMineJ != j) && cells[newMineI][newMineJ] != Cell.MINE) {
-                cells[newMineI][newMineJ] = Cell.MINE;
-                n++;
+            if((newMineI != i || newMineJ != j) && cells[newMineI][newMineJ] != Cell.MINE && isMineValidPosition(newMineI, newMineJ)) {
+                    cells[newMineI][newMineJ] = Cell.MINE;
+                    n++;
             }
         }
         for(i = 0; i < HEIGHT; i++) {
             for(j = 0; j < WIDTH; j++) {
                 discovered[i][j] = false;
                 if(cells[i][j] != Cell.MINE) {
-                    switch(countAdjacent(i, j, false)) {
+                    switch(countAdjacent(i, j, "mine")) {
                         case 0 : cells[i][j] = Cell.EMPTY; break;
                         case 1 : cells[i][j] = Cell.ONE; break;
                         case 2 : cells[i][j] = Cell.TWO; break;
@@ -192,6 +194,16 @@ public final class DemineurModel {
 
     /**
      *
+     * @param height : the grid number of rows
+     * @param width : the grid number of columns
+     * @return the maximum number of mines that a given grid should have
+     */
+    public int getMaxMines(int height, int width) {
+        return height * width - 2 *(height + width);
+    }
+
+    /**
+     *
      * @return true if none move has been done yet
      */
     private boolean isFirstMove() {
@@ -205,9 +217,6 @@ public final class DemineurModel {
      * @return true if the (i, j) cell has been discovered
      */
     public boolean isDiscovered(int i, int j) {
-        //System.err.println("MODEL : width = " + WIDTH + ", height = " + HEIGHT);
-        //System.err.println("MODEL : i = " + i + ", j = " + j);
-        //System.err.println("MODEL : discover length = width " + discovered[0].length + ", height " + discovered.length);
         return discovered[i][j];
     }
 
@@ -218,9 +227,6 @@ public final class DemineurModel {
      * @return true if the (i, j) cell has been marked
      */
     public boolean isMarked(int i, int j) {
-        //System.err.println("MODEL : width = " + WIDTH + ", height = " + HEIGHT);
-        //System.err.println("MODEL : i = " + i + ", j = " + j);
-        //System.err.println("MODEL : discover length = width " + discovered[0].length + ", height " + discovered.length);
         return marked[i][j];
     }
 
@@ -297,20 +303,21 @@ public final class DemineurModel {
     }
 
     /**
-     * Calculate the number of a specific content (flag or mine) of cells around the given cell
+     * Calculate the number of a specific content of cells around the given cell
      * @param i : the cell row
      * @param j : the cell column
-     * @param flag : true if the cell content comparison must be done with a flag, false for a mine
-     * @return the number of adjacent cells that contains flag or mine depending on flag value
+     * @param compared : a string that describe with which cell content the comparison must be done ("mine", "flag", or any else to count the number of neighbours)
+     * @return the number of adjacent cells that contains flag or mine depending on compared value
      */
-    private int countAdjacent(int i, int j, boolean flag) {
+    private int countAdjacent(int i, int j, String compared) {
         int count = 0;
         for(int m = -1; m <= 1; m++) {
             for(int n = -1; n <= 1; n++) {
                 if(m == 0 && n == 0)
                     continue;
                 try {
-                    if(flag ? isMarked(i+m, j+n) : cells[i+m][j+n] == Cell.MINE)
+                    Cell cell = cells[i+m][j+n];
+                    if(compared.equals("flag") ? isMarked(i+m, j+n) : !compared.equals("mine") || cell == Cell.MINE)
                         count++;
                 }
                 catch(IndexOutOfBoundsException e) {
@@ -319,6 +326,30 @@ public final class DemineurModel {
             }
         }
         return count;
+    }
+
+    /**
+     * Checks if putting a mine on the (i, j) cell will make an adjacent mine have only mines neighbours
+     * @param i : the cell row
+     * @param j : the cell column
+     * @return true if the mine can be placed there
+     */
+    private boolean isMineValidPosition(int i, int j) {
+        for(int m = -1; m <= 1; m++) {
+            for(int n = -1; n <= 1; n++) {
+                if(m == 0 && n == 0)
+                    continue;
+                try {
+                    if(cells[i+m][j+n] == Cell.MINE && countAdjacent(i+m, j+n, "neighbours") == (countAdjacent(i+m, j+n, "mine") + 1)) { // we suppose that the (i, j) cell contains a mine
+                        return false; // this cell has an incorrect number of adjacent mines, so the (i, j) cell cannot contain a mine
+                    }
+                }
+                catch(IndexOutOfBoundsException e) {
+                    continue;
+                }
+            }
+        }
+        return true;
     }
 
     /**
@@ -413,6 +444,7 @@ public final class DemineurModel {
             }
         }
     }
+
     /**
      * Makes the grid changes depending on the player's move's type
      * @param i : the cell row
@@ -425,7 +457,7 @@ public final class DemineurModel {
         }
         else if(isMarked(i, j))
             return;
-        if(isDiscovered(i, j) && countAdjacent(i, j, true) == cells[i][j].ordinal() - 1)
+        if(isDiscovered(i, j) && countAdjacent(i, j, "flag") == cells[i][j].ordinal() - 1)
             discoveredMove(i, j);
         else
             basicMove(i, j);
