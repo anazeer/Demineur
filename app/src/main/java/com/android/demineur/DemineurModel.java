@@ -114,6 +114,11 @@ public final class DemineurModel {
     private int elapsedTime;
 
     /**
+     * true if the game is paused
+     */
+    private boolean pause;
+
+    /**
      * Construct a new Minesweeper model
      * @param width : number of columns
      * @param height : number of rows
@@ -130,6 +135,7 @@ public final class DemineurModel {
         flagMode = false;
         lost = false;
         won = false;
+        pause = false;
     }
 
     /**
@@ -187,7 +193,8 @@ public final class DemineurModel {
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                elapsedTime++;
+                if(!pause)
+                    elapsedTime++;
             }
         };
         timer = new Timer();
@@ -298,6 +305,14 @@ public final class DemineurModel {
 
     /**
      *
+     * @return true if the game is paused, false otherwise
+     */
+    public boolean isPause() {
+        return pause;
+    }
+
+    /**
+     *
      * @return the elapsed time since the game begun
      */
     public int getElapsedTime() {
@@ -330,6 +345,14 @@ public final class DemineurModel {
         this.won = true;
         timer.cancel();
         timer.purge();
+    }
+
+    /**
+     *
+     * @param pause : true if the game must be paused, false for resuming the game
+     */
+    public void setPause(boolean pause) {
+        this.pause = pause;
     }
 
     /**

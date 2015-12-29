@@ -59,8 +59,33 @@ public class MainActivity extends AppCompatActivity {
                 setPositiveButton(getResources().getString(R.string.yes), settingsDialogListener).
                 setNegativeButton(getResources().getString(R.string.no), settingsDialogListener);
         customHandler = new CustomHandler();
-        newGame(5, 5, 4);
+        model = (DemineurModel) getLastCustomNonConfigurationInstance();
+        if(model == null)
+            newGame(5, 5, 4);
+        else
+            restartGame();
         initSettingsDialog();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        model.setPause(true);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        model.setPause(false);
+    }
+
+    /**
+     * If the configuration changes, saves the model
+     * @return the model
+     */
+    @Override
+    public Object onRetainCustomNonConfigurationInstance() {
+        return model;
     }
 
     private void initSettingsDialog() {
@@ -95,19 +120,28 @@ public class MainActivity extends AppCompatActivity {
         if(timeUpdateThread != null) {
             timeUpdateThread.interrupt();
         }
-        timeUpdateThread = new Thread(updateTimerRunnable);
         model = new DemineurModel(width, height, mines);
         initGrid();
         gridLayout.startAnimation(animation);
         minesCountText.setText(getResources().getString(R.string.count_mines, model.getRemainingCountMines()));
         flagButton.setBackgroundResource(R.color.gameBackground);
+        timeUpdateThread = new Thread(updateTimerRunnable);
+        timeUpdateThread.start();
+    }
+
+    private void restartGame() {
+        if(timeUpdateThread != null) {
+            timeUpdateThread.interrupt();
+        }
+        initGrid();
+        updateGrid();
+        updateFlagButton();
+        timeUpdateThread = new Thread(updateTimerRunnable);
         timeUpdateThread.start();
     }
 
     private void initGrid() {
         gridLayout.removeAllViews();
-        //gridLayout.setHorizontalScrollBarEnabled(true);
-        //gridLayout.setVerticalScrollBarEnabled(true);
         gridLayout.setColumnCount(model.getWidth());
         gridLayout.setRowCount(model.getHeight());
         for(int i = 0; i < model.getHeight(); i++) {
@@ -212,11 +246,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             model.setFlagMode(!model.isFlagMode());
-
-            if(model.isFlagMode())
-                flagButton.setBackgroundResource(R.color.flagPressed);
-            else
-                flagButton.setBackgroundResource(R.color.gameBackground);
+            updateFlagButton();
         }
     };
 
@@ -242,13 +272,20 @@ public class MainActivity extends AppCompatActivity {
             int i = Integer.parseInt(position[0] + "");
             int j = Integer.parseInt(position[1] + "");
             model.move(i, j);
-            minesCountText.setText(getResources().getString(R.string.count_mines, model.getRemainingCountMines()));
             updateGrid();
         }
 
     };
 
+    private void updateFlagButton() {
+        if(model.isFlagMode())
+            flagButton.setBackgroundResource(R.color.flagPressed);
+        else
+            flagButton.setBackgroundResource(R.color.gameBackground);
+    }
+
     private void updateGrid() {
+        minesCountText.setText(getResources().getString(R.string.count_mines, model.getRemainingCountMines()));
         for(int i = 0; i < model.getHeight(); i++) {
             for (int j = 0; j < model.getWidth(); j++) {
                 ImageView imageView = (ImageView) gridLayout.getChildAt(i * model.getWidth() + j);
