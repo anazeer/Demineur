@@ -3,7 +3,8 @@
     android:orientation="vertical"
     android:id="@+id/layoutSettingsId"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@drawable/game_background">
 
     <TextView
         android:id="@+id/widthTextId"
@@ -46,7 +47,7 @@
         android:layout_alignBottom="@+id/heightTextId"
         android:layout_toRightOf="@+id/heightTextId"
         android:layout_toEndOf="@+id/heightTextId"
-        >
+        android:background="@drawable/game_background">
     </SeekBar>
 
     <TextView
@@ -74,7 +75,8 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/minesTextId"
         android:layout_toRightOf="@+id/heightTextId"
-        android:layout_toEndOf="@+id/heightTextId">
+        android:layout_toEndOf="@+id/heightTextId"
+        android:background="@drawable/game_background">
     </SeekBar>
 
     <TextView
@@ -94,7 +96,8 @@
         android:text="@string/accept"
         android:layout_alignTop="@+id/buttonCancelSettingsId"
         android:layout_toLeftOf="@+id/buttonCancelSettingsId"
-        android:layout_toStartOf="@+id/buttonCancelSettingsId">
+        android:layout_toStartOf="@+id/buttonCancelSettingsId"
+        android:background="@drawable/game_background">
     </Button>
 
     <Button
@@ -104,7 +107,8 @@
         android:text="@string/cancel"
         android:layout_below="@+id/minesSeekBarSettingsId"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true">
+        android:layout_alignParentEnd="true"
+        android:background="@drawable/game_background">
     </Button>
 
 </RelativeLayout>

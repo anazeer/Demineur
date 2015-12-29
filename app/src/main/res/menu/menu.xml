@@ -3,7 +3,7 @@
     <item
         android:id="@+id/newGameMenuId"
         android:title="@string/new_game" >
-        <menu>
+        <menu android:background="@drawable/game_background">
             <item
                 android:id="@+id/newBeginnerMenuId"
                 android:title="@string/new_beginner"

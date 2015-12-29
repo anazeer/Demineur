@@ -1,6 +1,8 @@
 package com.android.demineur;
 
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public final class DemineurModel {
 
@@ -102,6 +104,16 @@ public final class DemineurModel {
     private boolean won;
 
     /**
+     * The timer
+     */
+    private Timer timer;
+
+    /**
+     * The elpased time since the game has started
+     */
+    private int elapsedTime;
+
+    /**
      * Construct a new Minesweeper model
      * @param width : number of columns
      * @param height : number of rows
@@ -136,15 +148,14 @@ public final class DemineurModel {
      */
     private void initCells(int i, int j) {
         cells = new Cell[HEIGHT][WIDTH];
-        System.out.println(cells[1][1]);
         countDiscoveredCells = 0;
         int n = 0;
         while(n < MINES) {
             int newMineI = new Random().nextInt(HEIGHT);
             int newMineJ = new Random().nextInt(WIDTH);
             if((newMineI != i || newMineJ != j) && cells[newMineI][newMineJ] != Cell.MINE && isMineValidPosition(newMineI, newMineJ)) {
-                    cells[newMineI][newMineJ] = Cell.MINE;
-                    n++;
+                cells[newMineI][newMineJ] = Cell.MINE;
+                n++;
             }
         }
         for(i = 0; i < HEIGHT; i++) {
@@ -166,6 +177,21 @@ public final class DemineurModel {
                 }
             }
         }
+        initTimer(); // the cloak starts after the first move
+    }
+
+    /**
+     * Initialize the timer, increments the time each second
+     */
+    private void initTimer() {
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                elapsedTime++;
+            }
+        };
+        timer = new Timer();
+        timer.scheduleAtFixedRate(task, 0, 1000);
     }
 
     /**
@@ -199,7 +225,7 @@ public final class DemineurModel {
      * @return the maximum number of mines that a given grid should have
      */
     public int getMaxMines(int height, int width) {
-        return height * width - 2 *(height + width);
+        return height * width - 2 * (height + width);
     }
 
     /**
@@ -272,6 +298,14 @@ public final class DemineurModel {
 
     /**
      *
+     * @return the elapsed time since the game begun
+     */
+    public int getElapsedTime() {
+        return elapsedTime;
+    }
+
+    /**
+     *
      * @param i : the cell row
      * @param j : the cell column
      * @return the (i, j) cell content
@@ -285,6 +319,8 @@ public final class DemineurModel {
      */
     private void setLost() {
         this.lost = true;
+        timer.cancel();
+        timer.purge();
     }
 
     /**
@@ -292,6 +328,8 @@ public final class DemineurModel {
      */
     private void setWon() {
         this.won = true;
+        timer.cancel();
+        timer.purge();
     }
 
     /**
@@ -462,4 +500,6 @@ public final class DemineurModel {
         else
             basicMove(i, j);
     }
+
+
 }

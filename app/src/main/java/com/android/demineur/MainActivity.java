@@ -3,10 +3,8 @@ package com.android.demineur;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.SystemClock;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -42,8 +40,9 @@ public class MainActivity extends AppCompatActivity {
     private TextView minesValueText;
     private ImageButton flagButton;
     private TextView minesCountText;
-    private long startTime;
-    private Handler customHandler;
+    private TextView timeText;
+    private CustomHandler customHandler;
+    private Thread timeUpdateThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,12 +53,12 @@ public class MainActivity extends AppCompatActivity {
         flagButton = (ImageButton) findViewById(R.id.flagButtonId);
         flagButton.setOnClickListener(setFlagModeListener);
         minesCountText = (TextView) findViewById(R.id.minesId);
+        timeText = (TextView) findViewById(R.id.timeId);
         replayDialog = new AlertDialog.Builder(this);
         replayDialog.setMessage(getResources().getString(R.string.dialog_replay)).
                 setPositiveButton(getResources().getString(R.string.yes), settingsDialogListener).
                 setNegativeButton(getResources().getString(R.string.no), settingsDialogListener);
-        customHandler = new Handler();
-        startTime = 0L;
+        customHandler = new CustomHandler();
         newGame(5, 5, 4);
         initSettingsDialog();
     }
@@ -93,13 +92,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void newGame(int width, int height, int mines) {
+        if(timeUpdateThread != null) {
+            timeUpdateThread.interrupt();
+        }
+        timeUpdateThread = new Thread(updateTimerRunnable);
         model = new DemineurModel(width, height, mines);
         initGrid();
         gridLayout.startAnimation(animation);
         minesCountText.setText(getResources().getString(R.string.count_mines, model.getRemainingCountMines()));
         flagButton.setBackgroundResource(R.color.gameBackground);
-        startTime = SystemClock.uptimeMillis();
-        customHandler.postDelayed(updateTimerThread, 0);
+        timeUpdateThread.start();
     }
 
     private void initGrid() {
@@ -191,15 +193,18 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private Runnable updateTimerThread = new Runnable() {
+    private Runnable updateTimerRunnable = new Runnable() {
         public void run() {
-            long timeInMilliseconds = SystemClock.uptimeMillis() - startTime;
-            int secs = (int) (timeInMilliseconds / 1000);
-            int mins = secs / 60;
-            secs = secs % 60;
-            TextView timer = (TextView) findViewById(R.id.timeId);
-            timer.setText(getResources().getString(R.string.timer, mins, secs));
-            customHandler.postDelayed(this, 0);
+            try {
+                while(!Thread.currentThread().isInterrupted()) {
+                    int time = model.getElapsedTime();
+                    Message msg = customHandler.obtainMessage(0, time/60, time%60, timeText);
+                    customHandler.sendMessage(msg);
+                    Thread.sleep(500); // Checks for the time update in the model two times in a second, to prevent from bad synchronization
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
         }
     };
 
