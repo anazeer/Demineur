@@ -3,8 +3,11 @@ package com.android.demineur;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -60,8 +63,17 @@ public class MainActivity extends AppCompatActivity {
                 setNegativeButton(getResources().getString(R.string.no), settingsDialogListener);
         customHandler = new CustomHandler();
         model = (DemineurModel) getLastCustomNonConfigurationInstance();
-        if(model == null)
-            newGame(5, 5, 4);
+        if(model == null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+            String[] gridSizes = getResources().getStringArray(R.array.grid_size_array);
+            String pref = preferences.getString("gridSizePrefId", gridSizes[0]);
+            if(pref.equals(gridSizes[0]))
+                newGame(9, 9, 10);
+            else if(pref.equals(gridSizes[1]))
+                newGame(16, 16, 40);
+            else if(pref.equals(gridSizes[2]))
+                newGame(30, 16, 99);
+        }
         else
             restartGame();
         initSettingsDialog();
@@ -191,7 +203,8 @@ public class MainActivity extends AppCompatActivity {
                 settingsDialog.show();
                 break;
             case R.id.settingsMenuId:
-                settingsDialog.show();
+                Intent prefActivity = new Intent(this, DemineurPreference.class);
+                startActivity(prefActivity);
                 break;
         }
         return super.onOptionsItemSelected(item);

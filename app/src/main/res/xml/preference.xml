@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+<PreferenceCategory
+    android:title="@string/grid_preference">
+
+    <ListPreference
+        android:key="gridSizePrefId"
+        android:title="@string/grid_size_pref_title"
+        android:summary="@string/grid_size_pref_summary"
+        android:entries="@array/grid_size_array"
+        android:entryValues="@array/grid_size_array"
+        android:dialogTitle="@string/grid_size_pref_title"
+        android:positiveButtonText="@string/accept"
+        android:negativeButtonText="@string/cancel"
+        />
+
+
+</PreferenceCategory>
+
+</PreferenceScreen>

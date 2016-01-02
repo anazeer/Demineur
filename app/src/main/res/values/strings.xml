@@ -24,4 +24,7 @@
     <string name="mines_value">%d</string>
     <string name="timer">" "%1$02d:%2$02d</string>
     <string name="count_mines">  %d</string>
+    <string name="grid_preference">Grid</string>
+    <string name="grid_size_pref_title">Default size</string>
+    <string name="grid_size_pref_summary">Choose the default grid size</string>
 </resources>
