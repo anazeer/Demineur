@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
+        android:id="@+id/restartMenuId"
+        android:title="@string/restart_game"
+        />
+    <item
         android:id="@+id/newGameMenuId"
         android:title="@string/new_game" >
         <menu android:background="@drawable/game_background">

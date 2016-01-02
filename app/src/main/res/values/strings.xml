@@ -3,6 +3,7 @@
     <string name="settings">Settings</string>
     <string name="dialog_replay">Do you want to replay ?</string>
     <string name="result">You %1$s!</string>
+    <string name="restart_game">Restart</string>
     <string name="new_game">New game</string>
     <string name="new_beginner">Beginner</string>
     <string name="new_intermediate">Intermediate</string>

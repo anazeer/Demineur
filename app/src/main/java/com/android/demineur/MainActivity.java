@@ -168,6 +168,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.restartMenuId:
+                newGame(model.getWidth(), model.getHeight(), model.getMines());
+                return true;
             case R.id.newBeginnerMenuId:
                 newGame(9, 9, 10);
                 return true;
