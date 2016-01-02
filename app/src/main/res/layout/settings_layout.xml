@@ -3,112 +3,137 @@
     android:orientation="vertical"
     android:id="@+id/layoutSettingsId"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:background="@drawable/game_background">
+    android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/widthTextId"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/width"/>
-
-    <SeekBar
-        android:id="@+id/widthSeekBarSettingsId"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/widthSettingsId"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/heightTextId"
-        android:layout_toEndOf="@+id/heightTextId">
-    </SeekBar>
+        android:layout_marginTop="12dp"
+        android:layout_marginRight="6dp"
+        android:layout_marginLeft="6dp"
+        android:layout_alignParentTop = "true">
 
-    <TextView
-        android:id="@+id/widthValueId"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/heightSeekBarSettingsId"
-        android:layout_alignRight="@+id/widthSeekBarSettingsId"
-        android:text="@string/width_value"
-        android:layout_alignEnd="@+id/widthSeekBarSettingsId">
-    </TextView>
+        <TextView
+            android:id="@+id/widthTextId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/width"
+            android:layout_centerVertical="true"
+            android:layout_alignParentTop="true"/>
 
-    <TextView
-        android:id="@+id/heightTextId"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/height"
-        android:layout_below="@+id/widthSeekBarSettingsId"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        <SeekBar
+            android:id="@+id/widthSeekBarSettingsId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/widthTextId">
+        </SeekBar>
 
-    <SeekBar
-        android:id="@+id/heightSeekBarSettingsId"
+        <TextView
+            android:id="@+id/widthValueId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/width_value"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="6dp">
+        </TextView>
+    </RelativeLayout>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/heightSettingsId"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/heightTextId"
-        android:layout_toRightOf="@+id/heightTextId"
-        android:layout_toEndOf="@+id/heightTextId"
-        android:background="@drawable/game_background">
-    </SeekBar>
+        android:layout_marginTop="6dp"
+        android:layout_marginRight="6dp"
+        android:layout_marginLeft="6dp"
+        android:layout_below="@id/widthSettingsId">
 
-    <TextView
-        android:id="@+id/heightValueId"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/widthValueId"
-        android:layout_alignRight="@+id/widthSeekBarSettingsId"
-        android:layout_alignEnd="@+id/widthSeekBarSettingsId"
-        android:text="@string/height_value">
-    </TextView>
+        <TextView
+            android:id="@+id/heightTextId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/height"
+            android:layout_centerVertical="true"
+            android:layout_alignParentTop="true" />
 
-    <TextView
-        android:id="@+id/minesTextId"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/mines"
-        android:layout_below="@+id/heightSeekBarSettingsId"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        <SeekBar
+            android:id="@+id/heightSeekBarSettingsId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/heightTextId">
+        </SeekBar>
 
-    <SeekBar
-        android:id="@+id/minesSeekBarSettingsId"
+        <TextView
+            android:id="@+id/heightValueId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/height_value"
+            android:layout_marginLeft="6dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true">
+        </TextView>
+    </RelativeLayout>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/minesSettingsId"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/minesTextId"
-        android:layout_toRightOf="@+id/heightTextId"
-        android:layout_toEndOf="@+id/heightTextId"
-        android:background="@drawable/game_background">
-    </SeekBar>
+        android:layout_marginTop="6dp"
+        android:layout_marginRight="6dp"
+        android:layout_marginLeft="6dp"
+        android:layout_marginBottom="12dp"
+        android:layout_below="@id/heightSettingsId">
 
-    <TextView
-        android:id="@+id/minesValueId"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/heightValueId"
-        android:layout_alignRight="@+id/widthSeekBarSettingsId"
-        android:layout_alignEnd="@+id/widthSeekBarSettingsId"
-        android:text="@string/mines_value">
-    </TextView>
+        <TextView
+            android:id="@+id/minesTextId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/mines"
+            android:layout_centerVertical="true"
+            android:layout_alignParentTop="true"/>
 
-    <Button
-        android:id="@+id/buttonAcceptSettingsId"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/accept"
-        android:layout_alignTop="@+id/buttonCancelSettingsId"
-        android:layout_toLeftOf="@+id/buttonCancelSettingsId"
-        android:layout_toStartOf="@+id/buttonCancelSettingsId"
-        android:background="@drawable/game_background">
-    </Button>
+        <SeekBar
+            android:id="@+id/minesSeekBarSettingsId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/minesTextId">
+        </SeekBar>
+
+        <TextView
+            android:id="@+id/minesValueId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/mines_value"
+            android:layout_marginLeft="6dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true">
+        </TextView>
+    </RelativeLayout>
 
     <Button
         android:id="@+id/buttonCancelSettingsId"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/cancel"
-        android:layout_below="@+id/minesSeekBarSettingsId"
+        android:layout_below="@id/minesSettingsId"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:background="@drawable/game_background">
+        android:layout_alignParentEnd="true">
     </Button>
+
+    <Button
+        android:id="@+id/buttonAcceptSettingsId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/accept"
+        android:layout_alignTop="@id/buttonCancelSettingsId"
+        android:layout_toLeftOf="@id/buttonCancelSettingsId"
+        android:layout_toStartOf="@id/buttonCancelSettingsId">
+    </Button>
+
+
 
 </RelativeLayout>
