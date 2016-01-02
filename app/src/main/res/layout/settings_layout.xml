@@ -27,7 +27,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toRightOf="@id/widthTextId">
+            android:layout_toRightOf="@id/widthTextId"
+            android:layout_marginRight="12dp">
         </SeekBar>
 
         <TextView
@@ -36,8 +37,7 @@
             android:layout_height="wrap_content"
             android:text="@string/width_value"
             android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="6dp">
+            android:layout_centerVertical="true">
         </TextView>
     </RelativeLayout>
 
@@ -63,7 +63,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toRightOf="@id/heightTextId">
+            android:layout_toRightOf="@id/heightTextId"
+            android:layout_marginRight="12dp">
         </SeekBar>
 
         <TextView
@@ -71,7 +72,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/height_value"
-            android:layout_marginLeft="6dp"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true">
         </TextView>
@@ -100,7 +100,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toRightOf="@id/minesTextId">
+            android:layout_toRightOf="@id/minesTextId"
+            android:layout_marginRight="12dp">
         </SeekBar>
 
         <TextView
@@ -108,7 +109,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/mines_value"
-            android:layout_marginLeft="6dp"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true">
         </TextView>
