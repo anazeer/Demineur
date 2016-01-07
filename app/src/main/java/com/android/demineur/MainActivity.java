@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
         setContentView(R.layout.grid_layout);
         animation = AnimationUtils.loadAnimation(this, R.anim.move);
         gridLayout = (GridLayout) findViewById(R.id.gridId);
