@@ -104,11 +104,6 @@ public final class DemineurModel {
     private boolean won;
 
     /**
-     * The timer
-     */
-    private Timer timer;
-
-    /**
      * The elpased time since the game has started
      */
     private int elapsedTime;
@@ -155,6 +150,7 @@ public final class DemineurModel {
         flagMode = false;
         lost = false;
         won = false;
+        elapsedTime = 0;
         pause = false;
         burstModeJoker = false;
         burstJokerUsed = false;
@@ -207,22 +203,6 @@ public final class DemineurModel {
                 }
             }
         }
-        initTimer(); // the cloak starts after the first move
-    }
-
-    /**
-     * Initialize the timer, increments the time each second
-     */
-    private void initTimer() {
-        TimerTask task = new TimerTask() {
-            @Override
-            public void run() {
-                if(!pause)
-                    elapsedTime++;
-            }
-        };
-        timer = new Timer();
-        timer.scheduleAtFixedRate(task, 0, 1000);
     }
 
     /**
@@ -422,8 +402,6 @@ public final class DemineurModel {
      */
     private void setLost() {
         this.lost = true;
-        timer.cancel();
-        timer.purge();
     }
 
     /**
@@ -431,8 +409,14 @@ public final class DemineurModel {
      */
     private void setWon() {
         this.won = true;
-        timer.cancel();
-        timer.purge();
+    }
+
+    /**
+     *
+     * @param elapsedTime : the enw elapsed time
+     */
+    public void setElapsedTime(int elapsedTime) {
+        this.elapsedTime = elapsedTime;
     }
 
     /**
@@ -557,8 +541,6 @@ public final class DemineurModel {
      * @param j : the cell column
      */
     private void basicMove(int i, int j) {
-        if(isFirstMove())
-            initCells(i, j);
         if(discovered[i][j]) {
             return;
         }
@@ -643,22 +625,19 @@ public final class DemineurModel {
      * @param j : the cell column
      */
     public void move(int i, int j) {
+        if(isFirstMove())
+            initCells(i, j);
         if(isSafeModeJoker())
             safeMove(i, j);
         else if(isBurstModeJoker()) {
             burstMove(i, j);
         }
-        if(isFlagMode() && !isDiscovered(i, j)) {
+        else if(isFlagMode() && !isDiscovered(i, j)) {
             setMarked(i, j);
-            return;
         }
-        else if(isMarked(i, j))
-            return;
-        if(isDiscovered(i, j) && countAdjacent(i, j, "flag") == cells[i][j].ordinal() - 1)
+        else if(isDiscovered(i, j) && countAdjacent(i, j, "flag") == cells[i][j].ordinal() - 1)
             discoveredMove(i, j);
-        else
+        else if(!isMarked(i, j))
             basicMove(i, j);
     }
-
-
 }
