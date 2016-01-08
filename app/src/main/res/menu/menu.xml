@@ -1,38 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/restartMenuId"
-        android:title="@string/restart_game"
-        />
-    <item
-        android:id="@+id/newGameMenuId"
-        android:title="@string/new_game" >
-        <menu>
-            <item
-                android:id="@+id/newBeginnerMenuId"
-                android:title="@string/new_beginner"
-                />
-            <item
-                android:id="@+id/newIntermediateMenuId"
-                android:title="@string/new_intermediate"
-                />
-            <item
-                android:id="@+id/newExpertMenuId"
-                android:title="@string/new_expert"
-                />
-            <item
-                android:id="@+id/newRandomMenuId"
-                android:title="@string/new_random"
-                />
-            <item
-                android:id="@+id/newCustomMenuId"
-                android:title="@string/new_custom"
-                />
-        </menu>
-    </item>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:com.android.demineur="http://schemas.android.com/apk/res-auto">
+
     <item
         android:id="@+id/jokerMenuId"
         android:title="@string/joker"
+        com.android.demineur:showAsAction="ifRoom"
+        android:icon="@drawable/menu"
         >
         <menu>
             <item
@@ -45,8 +19,49 @@
                 />
         </menu>
     </item>
+
     <item
-        android:id="@+id/settingsMenuId"
-        android:title="@string/settings"
-        />
+        android:id="@+id/restartMenuId"
+        android:title="@string/restart_game"
+        com.android.demineur:showAsAction="ifRoom"
+        android:icon="@drawable/restart" />
+
+    <item
+        android:id="@+id/menuId"
+        android:title="@string/menu"
+        com.android.demineur:showAsAction="ifRoom"
+        android:icon="@drawable/menu"
+        >
+        <menu>
+            <item
+                android:id="@+id/newGameMenuId"
+                android:title="@string/new_game">
+                <menu>
+                    <item
+                        android:id="@+id/newBeginnerMenuId"
+                        android:title="@string/new_beginner"
+                        />
+                    <item
+                        android:id="@+id/newIntermediateMenuId"
+                        android:title="@string/new_intermediate"
+                        />
+                    <item
+                        android:id="@+id/newExpertMenuId"
+                        android:title="@string/new_expert"
+                        />
+                    <item
+                        android:id="@+id/newRandomMenuId"
+                        android:title="@string/new_random"
+                        />
+                    <item
+                        android:id="@+id/newCustomMenuId"
+                        android:title="@string/new_custom"
+                        />
+                </menu>
+            </item>
+            <item
+                android:id="@+id/settingsMenuId"
+                android:title="@string/settings"/>
+        </menu>
+    </item>
 </menu>
