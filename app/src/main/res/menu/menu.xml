@@ -7,7 +7,7 @@
     <item
         android:id="@+id/newGameMenuId"
         android:title="@string/new_game" >
-        <menu android:background="@drawable/game_background">
+        <menu>
             <item
                 android:id="@+id/newBeginnerMenuId"
                 android:title="@string/new_beginner"
@@ -27,6 +27,21 @@
             <item
                 android:id="@+id/newCustomMenuId"
                 android:title="@string/new_custom"
+                />
+        </menu>
+    </item>
+    <item
+        android:id="@+id/jokerMenuId"
+        android:title="@string/joker"
+        >
+        <menu>
+            <item
+                android:id="@+id/safeJokerMenuId"
+                android:title="@string/safeMode"
+                />
+            <item
+                android:id="@+id/burstJokerMenuId"
+                android:title="@string/burstMode"
                 />
         </menu>
     </item>

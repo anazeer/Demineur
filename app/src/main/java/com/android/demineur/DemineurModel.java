@@ -114,9 +114,29 @@ public final class DemineurModel {
     private int elapsedTime;
 
     /**
-     * true if the game is paused
+     * True if the game is paused
      */
     private boolean pause;
+
+    /**
+     * True if the next moves will be the burst joker
+     */
+    private boolean burstModeJoker;
+
+    /**
+     * True if the burst joker has been used
+     */
+    private boolean burstJokerUsed;
+
+    /**
+     * True if the next moves will be a safe move
+     */
+    private boolean safeModeJoker;
+
+    /**
+     * True if the safe joker has been used
+     */
+    private boolean safeJokerUsed;
 
     /**
      * Construct a new Minesweeper model
@@ -136,6 +156,10 @@ public final class DemineurModel {
         lost = false;
         won = false;
         pause = false;
+        burstModeJoker = false;
+        burstJokerUsed = false;
+        safeModeJoker = false;
+        safeJokerUsed = false;
     }
 
     /**
@@ -305,6 +329,14 @@ public final class DemineurModel {
 
     /**
      *
+     * @return the elapsed time since the game begun
+     */
+    public int getElapsedTime() {
+        return elapsedTime;
+    }
+
+    /**
+     *
      * @return true if the game is paused, false otherwise
      */
     public boolean isPause() {
@@ -313,10 +345,66 @@ public final class DemineurModel {
 
     /**
      *
-     * @return the elapsed time since the game begun
+     * @return true if the burst mode is activated
      */
-    public int getElapsedTime() {
-        return elapsedTime;
+    public boolean isBurstModeJoker() {
+        return burstModeJoker;
+    }
+
+    /**
+     *
+     * @return true if the burst joker has been used
+     */
+    public boolean isBurstJokerUsed() {
+        return burstJokerUsed;
+    }
+
+    /**
+     *
+     * @return true if the safe mode is activated
+     */
+    public boolean isSafeModeJoker() {
+        return safeModeJoker;
+    }
+
+    /**
+     *
+     * @return true if the safe joker has been used
+     */
+    public boolean isSafeJokerUsed() {
+        return safeJokerUsed;
+    }
+
+    /**
+     * Activate the burst mode
+     */
+    public void activateBurstModeJoker() {
+        if(!isBurstJokerUsed())
+            this.burstModeJoker = true;
+    }
+
+    /**
+     *
+     * @param burstJokerUsed
+     */
+    private void setBurstJokerUsed(boolean burstJokerUsed) {
+        this.burstJokerUsed = burstJokerUsed;
+    }
+
+    /**
+     * Activate the safe mode
+     */
+    public void activateSafeModeJoker() {
+        if(!isSafeJokerUsed())
+            this.safeModeJoker = true;
+    }
+
+    /**
+     *
+     * @param safeJokerUsed
+     */
+    private void setSafeJokerUsed(boolean safeJokerUsed) {
+        this.safeJokerUsed = safeJokerUsed;
     }
 
     /**
@@ -507,11 +595,59 @@ public final class DemineurModel {
     }
 
     /**
+     * The move will be safe. Puts a flag in the cell if it's a mine, else discovers it.
+     * The player has to play on an undiscovered and unmarked cell
+     * @param i : the cell row
+     * @param j : the cell column
+     */
+    private void safeMove(int i, int j) {
+        if(isDiscovered(i, j) || isMarked(i, j))
+            return;
+        switch(cells[i][j]) {
+            case MINE: setMarked(i, j); break;
+            default : basicMove(i, j); break;
+        }
+        setSafeJokerUsed(true);
+        safeModeJoker = false;
+    }
+
+    /**
+     * All the adjacent cells will be discovered or marked depending on the cell nature, including the current cell.
+     * The player has to play on an undiscovered and unmarked cell
+     * @param i : the cell row
+     * @param j : the cell column
+     */
+    private void burstMove(int i, int j) {
+        if(isDiscovered(i, j) || isMarked(i, j))
+            return;
+        for(int m = -1; m <= 1; m++) {
+            for(int n = -1; n <= 1; n++) {
+                try {
+                    switch(cells[i+m][j+n]) {
+                        case MINE: setMarked(i+m, j+n); break;
+                        default : basicMove(i+m, j+n); break;
+                    }
+                }
+                catch(IndexOutOfBoundsException e) {
+                    continue;
+                }
+            }
+        }
+        setBurstJokerUsed(true);
+        burstModeJoker = false;
+    }
+
+    /**
      * Makes the grid changes depending on the player's move's type
      * @param i : the cell row
      * @param j : the cell column
      */
     public void move(int i, int j) {
+        if(isSafeModeJoker())
+            safeMove(i, j);
+        else if(isBurstModeJoker()) {
+            burstMove(i, j);
+        }
         if(isFlagMode() && !isDiscovered(i, j)) {
             setMarked(i, j);
             return;

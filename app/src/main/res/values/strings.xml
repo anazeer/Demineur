@@ -10,6 +10,9 @@
     <string name="new_expert">Expert</string>
     <string name="new_random">Random</string>
     <string name="new_custom">Custom...</string>
+    <string name="joker">Joker</string>
+    <string name="safeMode">Safe move</string>
+    <string name="burstMode">Burst move</string>
     <string name="lost">lost</string>
     <string name="won">won</string>
     <string name="yes">Yes</string>

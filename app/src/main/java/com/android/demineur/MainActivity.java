@@ -8,6 +8,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,14 +20,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Adapter;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.SeekBar;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
@@ -202,6 +211,12 @@ public class MainActivity extends AppCompatActivity {
             case R.id.newCustomMenuId:
                 settingsDialog.show();
                 break;
+            case R.id.safeJokerMenuId:
+                model.activateSafeModeJoker();
+                return true;
+            case R.id.burstJokerMenuId:
+                model.activateBurstModeJoker();
+                return true;
             case R.id.settingsMenuId:
                 Intent prefActivity = new Intent(this, DemineurPreference.class);
                 startActivity(prefActivity);
