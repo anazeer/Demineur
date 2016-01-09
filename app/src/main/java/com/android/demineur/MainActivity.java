@@ -2,11 +2,13 @@ package com.android.demineur;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Message;
+import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -57,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         setContentView(R.layout.grid_layout);
-        animation = AnimationUtils.loadAnimation(this, R.anim.move);
         gridLayout = (GridLayout) findViewById(R.id.gridId);
         flagButton = (ImageButton) findViewById(R.id.flagButtonId);
         flagButton.setOnClickListener(setFlagModeListener);
@@ -83,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if((!model.isLost() && !model.isWon())) {
+        if((!model.isLost() && !model.isWon()) && model.getElapsedTime() != 0) {
             model.setPause(false);
             initTimer();
         }
@@ -120,6 +121,8 @@ public class MainActivity extends AppCompatActivity {
             Gson gson = new Gson();
             String json = preferences.getString("model", "");
             model = gson.fromJson(json, DemineurModel.class);
+            if(model.isLost() || model.isWon())
+                model = null;
         }
         if(model != null)
             restartGame();
@@ -167,6 +170,7 @@ public class MainActivity extends AppCompatActivity {
         stopTimer();
         model = new DemineurModel(width, height, mines);
         initGrid();
+        animation = AnimationUtils.loadAnimation(this, R.anim.move);
         gridLayout.startAnimation(animation);
         minesCountText.setText(getResources().getString(R.string.count_mines, model.getRemainingCountMines()));
         timeText.setText(getResources().getString(R.string.timer, 0, 0));
@@ -180,6 +184,13 @@ public class MainActivity extends AppCompatActivity {
         int time = model.getElapsedTime();
         Message msg = customHandler.obtainMessage(0, time/60, time%60, timeText);
         customHandler.sendMessage(msg);
+    }
+
+    private void lose() {
+        animation = AnimationUtils.loadAnimation(this, R.anim.explosion);
+        gridLayout.startAnimation(animation);
+        Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        vibrator.vibrate(500);
     }
 
     private void initGrid() {
@@ -414,11 +425,14 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-        if (model.isLost() || model.isWon()) {
+        if (model.isWon()) {
             String result = model.isWon() ? getResources().getString(R.string.won) : getResources().getString(R.string.lost);
             Toast.makeText(MainActivity.this, getResources().getString(R.string.result, result), Toast.LENGTH_SHORT).show();
             replayDialog.setTitle(getResources().getString(R.string.result, result));
             replayDialog.show();
+        }
+        else if(model.isLost()) {
+            lose();
         }
     }
 

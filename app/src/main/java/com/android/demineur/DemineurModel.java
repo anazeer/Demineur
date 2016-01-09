@@ -606,7 +606,7 @@ public final class DemineurModel {
             for(int n = -1; n <= 1; n++) {
                 try {
                     switch(cells[i+m][j+n]) {
-                        case MINE: setMarked(i+m, j+n); break;
+                        case MINE: if(!isMarked(i+m, j+n))setMarked(i+m, j+n); break;
                         default : basicMove(i+m, j+n); break;
                     }
                 }
