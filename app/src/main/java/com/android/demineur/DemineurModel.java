@@ -309,6 +309,14 @@ public final class DemineurModel {
 
     /**
      *
+     * @return true if the game is over (won, lost)
+     */
+    public boolean isGameOver() {
+        return isLost() || isWon() || cells == null;
+    }
+
+    /**
+     *
      * @return the elapsed time since the game begun
      */
     public int getElapsedTime() {

@@ -84,10 +84,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if((!model.isLost() && !model.isWon()) && model.getElapsedTime() != 0) {
-            model.setPause(false);
-            initTimer();
-        }
+        if(model.isGameOver())
+            return;
+        model.setPause(false);
+        initTimer();
     }
 
     @Override
@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
             Gson gson = new Gson();
             String json = preferences.getString("model", "");
             model = gson.fromJson(json, DemineurModel.class);
-            if(model.isLost() || model.isWon())
+            if(model.isGameOver())
                 model = null;
         }
         if(model != null)
