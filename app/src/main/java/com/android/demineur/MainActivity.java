@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
             Gson gson = new Gson();
             String json = preferences.getString("model", "");
             model = gson.fromJson(json, DemineurModel.class);
-            if(model.isGameOver())
+            if(model != null && model.isGameOver())
                 model = null;
         }
         if(model != null)
@@ -170,8 +170,10 @@ public class MainActivity extends AppCompatActivity {
         stopTimer();
         model = new DemineurModel(width, height, mines);
         initGrid();
-        animation = AnimationUtils.loadAnimation(this, R.anim.move);
-        gridLayout.startAnimation(animation);
+        if(preferences.getBoolean("animPrefId", true)) {
+            animation = AnimationUtils.loadAnimation(this, R.anim.move);
+            gridLayout.startAnimation(animation);
+        }
         minesCountText.setText(getResources().getString(R.string.count_mines, model.getRemainingCountMines()));
         timeText.setText(getResources().getString(R.string.timer, 0, 0));
         flagButton.setBackgroundResource(R.color.gameBackground);
@@ -187,10 +189,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void lose() {
-        animation = AnimationUtils.loadAnimation(this, R.anim.explosion);
-        gridLayout.startAnimation(animation);
-        Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-        vibrator.vibrate(500);
+        if(preferences.getBoolean("animPrefId", true)) {
+            animation = AnimationUtils.loadAnimation(this, R.anim.explosion);
+            gridLayout.startAnimation(animation);
+        }
+        if(preferences.getBoolean("vibrationPrefId", true)) {
+            Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            vibrator.vibrate(500);
+        }
     }
 
     private void initGrid() {

@@ -31,4 +31,8 @@
     <string name="grid_preference">Grid</string>
     <string name="grid_size_pref_title">Default size</string>
     <string name="grid_size_pref_summary">Choose the default grid size</string>
+    <string name="anim_pref_title">Animation</string>
+    <string name="anim_pref_summary">Use animation in game</string>
+    <string name="vibration_pref_title">Vibration</string>
+    <string name="vibration_pref_summary">Use vibration in game</string>
 </resources>
