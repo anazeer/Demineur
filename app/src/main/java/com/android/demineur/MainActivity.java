@@ -2,11 +2,13 @@ package com.android.demineur;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Message;
+import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -25,7 +27,11 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -45,14 +51,14 @@ public class MainActivity extends AppCompatActivity {
     private TextView minesCountText;
     private TextView timeText;
     private CustomHandler customHandler;
-    private Thread timeUpdateThread;
+    private Timer timer;
+    private SharedPreferences preferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         setContentView(R.layout.grid_layout);
-        animation = AnimationUtils.loadAnimation(this, R.anim.move);
         gridLayout = (GridLayout) findViewById(R.id.gridId);
         flagButton = (ImageButton) findViewById(R.id.flagButtonId);
         flagButton.setOnClickListener(setFlagModeListener);
@@ -63,20 +69,8 @@ public class MainActivity extends AppCompatActivity {
                 setPositiveButton(getResources().getString(R.string.yes), settingsDialogListener).
                 setNegativeButton(getResources().getString(R.string.no), settingsDialogListener);
         customHandler = new CustomHandler();
-        model = (DemineurModel) getLastCustomNonConfigurationInstance();
-        if(model == null) {
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-            String[] gridSizes = getResources().getStringArray(R.array.grid_size_array);
-            String pref = preferences.getString("gridSizePrefId", gridSizes[0]);
-            if(pref.equals(gridSizes[0]))
-                newGame(9, 9, 10);
-            else if(pref.equals(gridSizes[1]))
-                newGame(16, 16, 40);
-            else if(pref.equals(gridSizes[2]))
-                newGame(30, 16, 99);
-        }
-        else
-            restartGame();
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        initModel();
         initSettingsDialog();
     }
 
@@ -84,12 +78,28 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         model.setPause(true);
+        stopTimer();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        if(model.isGameOver())
+            return;
         model.setPause(false);
+        initTimer();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        model.setPause(true);
+        stopTimer();
+        Gson gson = new Gson();
+        String json = gson.toJson(model);
+        SharedPreferences.Editor preferencesEditor = preferences.edit();
+        preferencesEditor.putString("model", json);
+        preferencesEditor.apply();
     }
 
     /**
@@ -98,7 +108,34 @@ public class MainActivity extends AppCompatActivity {
      */
     @Override
     public Object onRetainCustomNonConfigurationInstance() {
+        stopTimer();
         return model;
+    }
+
+    /**
+     * Retrieves the model if it has been saved, otherwise creates a new model
+     */
+    private void initModel() {
+        model = (DemineurModel) getLastCustomNonConfigurationInstance();
+        if(model == null) {
+            Gson gson = new Gson();
+            String json = preferences.getString("model", "");
+            model = gson.fromJson(json, DemineurModel.class);
+            if(model != null && model.isGameOver())
+                model = null;
+        }
+        if(model != null)
+            restartGame();
+        else {
+            String[] gridSizes = getResources().getStringArray(R.array.grid_size_array);
+            String pref = preferences.getString("gridSizePrefId", gridSizes[0]);
+            if (pref.equals(gridSizes[0]))
+                newGame(9, 9, 10);
+            else if (pref.equals(gridSizes[1]))
+                newGame(16, 16, 40);
+            else if (pref.equals(gridSizes[2]))
+                newGame(30, 16, 99);
+        }
     }
 
     private void initSettingsDialog() {
@@ -130,27 +167,36 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void newGame(int width, int height, int mines) {
-        if(timeUpdateThread != null) {
-            timeUpdateThread.interrupt();
-        }
+        stopTimer();
         model = new DemineurModel(width, height, mines);
         initGrid();
-        gridLayout.startAnimation(animation);
+        if(preferences.getBoolean("animPrefId", true)) {
+            animation = AnimationUtils.loadAnimation(this, R.anim.move);
+            gridLayout.startAnimation(animation);
+        }
         minesCountText.setText(getResources().getString(R.string.count_mines, model.getRemainingCountMines()));
+        timeText.setText(getResources().getString(R.string.timer, 0, 0));
         flagButton.setBackgroundResource(R.color.gameBackground);
-        timeUpdateThread = new Thread(updateTimerRunnable);
-        timeUpdateThread.start();
     }
 
     private void restartGame() {
-        if(timeUpdateThread != null) {
-            timeUpdateThread.interrupt();
-        }
         initGrid();
         updateGrid();
         updateFlagButton();
-        timeUpdateThread = new Thread(updateTimerRunnable);
-        timeUpdateThread.start();
+        int time = model.getElapsedTime();
+        Message msg = customHandler.obtainMessage(0, time/60, time%60, timeText);
+        customHandler.sendMessage(msg);
+    }
+
+    private void lose() {
+        if(preferences.getBoolean("animPrefId", true)) {
+            animation = AnimationUtils.loadAnimation(this, R.anim.explosion);
+            gridLayout.startAnimation(animation);
+        }
+        if(preferences.getBoolean("vibrationPrefId", true)) {
+            Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            vibrator.vibrate(500);
+        }
     }
 
     private void initGrid() {
@@ -167,6 +213,34 @@ public class MainActivity extends AppCompatActivity {
                 imageView.setOnClickListener(cellListener);
                 gridLayout.addView(imageView, i * model.getWidth() + j);
             }
+        }
+    }
+
+    /**
+     * Initialize the timer, increments the time each second
+     */
+    private void initTimer() {
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                if(!model.isPause()) {
+                    int time = model.getElapsedTime();
+                    time++;
+                    model.setElapsedTime(time);
+                    Message msg = customHandler.obtainMessage(0, time/60, time%60, timeText);
+                    customHandler.sendMessage(msg);
+                }
+            }
+        };
+        timer = new Timer();
+        timer.scheduleAtFixedRate(task, 0, 1000);
+    }
+
+    private void stopTimer() {
+        if(timer != null) {
+            timer.cancel();
+            timer.purge();
+            timer = null;
         }
     }
 
@@ -203,6 +277,12 @@ public class MainActivity extends AppCompatActivity {
             case R.id.newCustomMenuId:
                 settingsDialog.show();
                 break;
+            case R.id.safeJokerMenuId:
+                model.activateSafeModeJoker();
+                return true;
+            case R.id.burstJokerMenuId:
+                model.activateBurstModeJoker();
+                return true;
             case R.id.settingsMenuId:
                 Intent prefActivity = new Intent(this, DemineurPreference.class);
                 startActivity(prefActivity);
@@ -244,21 +324,6 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private Runnable updateTimerRunnable = new Runnable() {
-        public void run() {
-            try {
-                while(!Thread.currentThread().isInterrupted()) {
-                    int time = model.getElapsedTime();
-                    Message msg = customHandler.obtainMessage(0, time/60, time%60, timeText);
-                    customHandler.sendMessage(msg);
-                    Thread.sleep(500); // Checks for the time update in the model two times in a second, to prevent from bad synchronization
-                }
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        }
-    };
-
     View.OnClickListener setFlagModeListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -289,6 +354,8 @@ public class MainActivity extends AppCompatActivity {
             int i = Integer.parseInt(position[0] + "");
             int j = Integer.parseInt(position[1] + "");
             model.move(i, j);
+            if(timer == null)
+                initTimer(); // the cloak starts after the first move
             updateGrid();
         }
 
@@ -345,6 +412,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 if((model.isLost() || model.isWon()) ) {
+                    stopTimer();
                     if(model.getCell(i, j) == DemineurModel.Cell.MINE) {
                         if (!model.isDiscovered(i, j)) {
                             if (model.isMarked(i, j))
@@ -363,11 +431,14 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-        if (model.isLost() || model.isWon()) {
+        if (model.isWon()) {
             String result = model.isWon() ? getResources().getString(R.string.won) : getResources().getString(R.string.lost);
             Toast.makeText(MainActivity.this, getResources().getString(R.string.result, result), Toast.LENGTH_SHORT).show();
             replayDialog.setTitle(getResources().getString(R.string.result, result));
             replayDialog.show();
+        }
+        else if(model.isLost()) {
+            lose();
         }
     }
 

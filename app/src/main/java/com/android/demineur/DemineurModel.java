@@ -104,19 +104,34 @@ public final class DemineurModel {
     private boolean won;
 
     /**
-     * The timer
-     */
-    private Timer timer;
-
-    /**
      * The elpased time since the game has started
      */
     private int elapsedTime;
 
     /**
-     * true if the game is paused
+     * True if the game is paused
      */
     private boolean pause;
+
+    /**
+     * True if the next moves will be the burst joker
+     */
+    private boolean burstModeJoker;
+
+    /**
+     * True if the burst joker has been used
+     */
+    private boolean burstJokerUsed;
+
+    /**
+     * True if the next moves will be a safe move
+     */
+    private boolean safeModeJoker;
+
+    /**
+     * True if the safe joker has been used
+     */
+    private boolean safeJokerUsed;
 
     /**
      * Construct a new Minesweeper model
@@ -135,7 +150,12 @@ public final class DemineurModel {
         flagMode = false;
         lost = false;
         won = false;
+        elapsedTime = 0;
         pause = false;
+        burstModeJoker = false;
+        burstJokerUsed = false;
+        safeModeJoker = false;
+        safeJokerUsed = false;
     }
 
     /**
@@ -183,22 +203,6 @@ public final class DemineurModel {
                 }
             }
         }
-        initTimer(); // the cloak starts after the first move
-    }
-
-    /**
-     * Initialize the timer, increments the time each second
-     */
-    private void initTimer() {
-        TimerTask task = new TimerTask() {
-            @Override
-            public void run() {
-                if(!pause)
-                    elapsedTime++;
-            }
-        };
-        timer = new Timer();
-        timer.scheduleAtFixedRate(task, 0, 1000);
     }
 
     /**
@@ -305,10 +309,10 @@ public final class DemineurModel {
 
     /**
      *
-     * @return true if the game is paused, false otherwise
+     * @return true if the game is over (won, lost)
      */
-    public boolean isPause() {
-        return pause;
+    public boolean isGameOver() {
+        return isLost() || isWon() || cells == null;
     }
 
     /**
@@ -317,6 +321,78 @@ public final class DemineurModel {
      */
     public int getElapsedTime() {
         return elapsedTime;
+    }
+
+    /**
+     *
+     * @return true if the game is paused, false otherwise
+     */
+    public boolean isPause() {
+        return pause;
+    }
+
+    /**
+     *
+     * @return true if the burst mode is activated
+     */
+    public boolean isBurstModeJoker() {
+        return burstModeJoker;
+    }
+
+    /**
+     *
+     * @return true if the burst joker has been used
+     */
+    public boolean isBurstJokerUsed() {
+        return burstJokerUsed;
+    }
+
+    /**
+     *
+     * @return true if the safe mode is activated
+     */
+    public boolean isSafeModeJoker() {
+        return safeModeJoker;
+    }
+
+    /**
+     *
+     * @return true if the safe joker has been used
+     */
+    public boolean isSafeJokerUsed() {
+        return safeJokerUsed;
+    }
+
+    /**
+     * Activate the burst mode
+     */
+    public void activateBurstModeJoker() {
+        if(!isBurstJokerUsed())
+            this.burstModeJoker = true;
+    }
+
+    /**
+     *
+     * @param burstJokerUsed
+     */
+    private void setBurstJokerUsed(boolean burstJokerUsed) {
+        this.burstJokerUsed = burstJokerUsed;
+    }
+
+    /**
+     * Activate the safe mode
+     */
+    public void activateSafeModeJoker() {
+        if(!isSafeJokerUsed())
+            this.safeModeJoker = true;
+    }
+
+    /**
+     *
+     * @param safeJokerUsed
+     */
+    private void setSafeJokerUsed(boolean safeJokerUsed) {
+        this.safeJokerUsed = safeJokerUsed;
     }
 
     /**
@@ -334,8 +410,6 @@ public final class DemineurModel {
      */
     private void setLost() {
         this.lost = true;
-        timer.cancel();
-        timer.purge();
     }
 
     /**
@@ -343,8 +417,14 @@ public final class DemineurModel {
      */
     private void setWon() {
         this.won = true;
-        timer.cancel();
-        timer.purge();
+    }
+
+    /**
+     *
+     * @param elapsedTime : the enw elapsed time
+     */
+    public void setElapsedTime(int elapsedTime) {
+        this.elapsedTime = elapsedTime;
     }
 
     /**
@@ -469,8 +549,6 @@ public final class DemineurModel {
      * @param j : the cell column
      */
     private void basicMove(int i, int j) {
-        if(isFirstMove())
-            initCells(i, j);
         if(discovered[i][j]) {
             return;
         }
@@ -507,22 +585,67 @@ public final class DemineurModel {
     }
 
     /**
+     * The move will be safe. Puts a flag in the cell if it's a mine, else discovers it.
+     * The player has to play on an undiscovered and unmarked cell
+     * @param i : the cell row
+     * @param j : the cell column
+     */
+    private void safeMove(int i, int j) {
+        if(isDiscovered(i, j) || isMarked(i, j))
+            return;
+        switch(cells[i][j]) {
+            case MINE: setMarked(i, j); break;
+            default : basicMove(i, j); break;
+        }
+        setSafeJokerUsed(true);
+        safeModeJoker = false;
+    }
+
+    /**
+     * All the adjacent cells will be discovered or marked depending on the cell nature, including the current cell.
+     * The player has to play on an undiscovered and unmarked cell
+     * @param i : the cell row
+     * @param j : the cell column
+     */
+    private void burstMove(int i, int j) {
+        if(isDiscovered(i, j) || isMarked(i, j))
+            return;
+        for(int m = -1; m <= 1; m++) {
+            for(int n = -1; n <= 1; n++) {
+                try {
+                    switch(cells[i+m][j+n]) {
+                        case MINE: if(!isMarked(i+m, j+n))setMarked(i+m, j+n); break;
+                        default : basicMove(i+m, j+n); break;
+                    }
+                }
+                catch(IndexOutOfBoundsException e) {
+                    continue;
+                }
+            }
+        }
+        setBurstJokerUsed(true);
+        burstModeJoker = false;
+    }
+
+    /**
      * Makes the grid changes depending on the player's move's type
      * @param i : the cell row
      * @param j : the cell column
      */
     public void move(int i, int j) {
-        if(isFlagMode() && !isDiscovered(i, j)) {
-            setMarked(i, j);
-            return;
+        if(isFirstMove())
+            initCells(i, j);
+        if(isSafeModeJoker())
+            safeMove(i, j);
+        else if(isBurstModeJoker()) {
+            burstMove(i, j);
         }
-        else if(isMarked(i, j))
-            return;
-        if(isDiscovered(i, j) && countAdjacent(i, j, "flag") == cells[i][j].ordinal() - 1)
+        else if(isFlagMode() && !isDiscovered(i, j)) {
+            setMarked(i, j);
+        }
+        else if(isDiscovered(i, j) && countAdjacent(i, j, "flag") == cells[i][j].ordinal() - 1)
             discoveredMove(i, j);
-        else
+        else if(!isMarked(i, j))
             basicMove(i, j);
     }
-
-
 }

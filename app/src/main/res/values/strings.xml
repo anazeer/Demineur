@@ -4,12 +4,16 @@
     <string name="dialog_replay">Do you want to replay ?</string>
     <string name="result">You %1$s!</string>
     <string name="restart_game">Restart</string>
+    <string name="menu">Menu</string>
     <string name="new_game">New game</string>
     <string name="new_beginner">Beginner</string>
     <string name="new_intermediate">Intermediate</string>
     <string name="new_expert">Expert</string>
     <string name="new_random">Random</string>
-    <string name="new_custom">Custom...</string>
+    <string name="new_custom">Custom&#8230;</string>
+    <string name="joker">Joker</string>
+    <string name="safeMode">Safe move</string>
+    <string name="burstMode">Burst move</string>
     <string name="lost">lost</string>
     <string name="won">won</string>
     <string name="yes">Yes</string>
@@ -27,4 +31,8 @@
     <string name="grid_preference">Grid</string>
     <string name="grid_size_pref_title">Default size</string>
     <string name="grid_size_pref_summary">Choose the default grid size</string>
+    <string name="anim_pref_title">Animation</string>
+    <string name="anim_pref_summary">Use animation in game</string>
+    <string name="vibration_pref_title">Vibration</string>
+    <string name="vibration_pref_summary">Use vibration in game</string>
 </resources>

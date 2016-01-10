@@ -13,8 +13,20 @@
         android:dialogTitle="@string/grid_size_pref_title"
         android:positiveButtonText="@string/accept"
         android:negativeButtonText="@string/cancel"
+        android:defaultValue="@string/new_beginner"
         />
-
+    <CheckBoxPreference
+        android:key="animPrefId"
+        android:title="@string/anim_pref_title"
+        android:summary="@string/anim_pref_summary"
+        android:defaultValue="true"
+        />
+    <CheckBoxPreference
+        android:key="vibrationPrefId"
+        android:title="@string/vibration_pref_title"
+        android:summary="@string/vibration_pref_summary"
+        android:defaultValue="true"
+        />
 
 </PreferenceCategory>
 

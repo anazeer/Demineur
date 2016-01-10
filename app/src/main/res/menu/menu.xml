@@ -3,15 +3,33 @@
     xmlns:com.android.demineur="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/jokerMenuId"
+        android:title="@string/joker"
+        com.android.demineur:showAsAction="ifRoom"
+        android:icon="@drawable/menu"
+        >
+        <menu>
+            <item
+                android:id="@+id/safeJokerMenuId"
+                android:title="@string/safeMode"
+                />
+            <item
+                android:id="@+id/burstJokerMenuId"
+                android:title="@string/burstMode"
+                />
+        </menu>
+    </item>
+
+    <item
         android:id="@+id/restartMenuId"
         android:title="@string/restart_game"
-        com.android.demineur:showAsAction="always"
+        com.android.demineur:showAsAction="ifRoom"
         android:icon="@drawable/restart" />
 
     <item
         android:id="@+id/menuId"
-        android:title="menu"
-        com.android.demineur:showAsAction="always"
+        android:title="@string/menu"
+        com.android.demineur:showAsAction="ifRoom"
         android:icon="@drawable/menu"
         >
         <menu>
