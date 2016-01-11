@@ -13,7 +13,9 @@
     <string name="new_custom">Custom&#8230;</string>
     <string name="joker">Joker</string>
     <string name="safeMode">Safe move</string>
+    <string name="safeModeActivated">Safe mode joker activated!</string>
     <string name="burstMode">Burst move</string>
+    <string name="burstModeActivated">Burst mode joker activated!</string>
     <string name="lost">lost</string>
     <string name="won">won</string>
     <string name="yes">Yes</string>

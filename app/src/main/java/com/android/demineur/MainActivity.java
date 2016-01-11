@@ -11,6 +11,7 @@ import android.os.Message;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.menu.ActionMenuItemView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -43,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private SeekBar minesSeekBar;
     private Dialog settingsDialog;
     private AlertDialog.Builder replayDialog;
+    private Menu menu;
     private View settingsLayout;
     private TextView widthValueText;
     private TextView heightValueText;
@@ -176,8 +178,9 @@ public class MainActivity extends AppCompatActivity {
         }
         minesCountText.setText(getResources().getString(R.string.count_mines, model.getRemainingCountMines()));
         timeText.setText(getResources().getString(R.string.timer, 0, 0));
-        flagButton.setBackgroundResource(R.drawable.just_flag);
-        //flagButton.setBackgroundResource(R.color.gameBackground);
+        flagButton.setImageResource(R.drawable.just_flag);
+        if(menu != null)
+            updateJokerButton();
     }
 
     private void restartGame() {
@@ -250,6 +253,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreateOptionsMenu(menu);
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.menu, menu);
+        this.menu = menu;
+        updateJokerButton();
         return true;
     }
 
@@ -280,9 +285,11 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.safeJokerMenuId:
                 model.activateSafeModeJoker();
+                updateJokerButton();
                 return true;
             case R.id.burstJokerMenuId:
                 model.activateBurstModeJoker();
+                updateJokerButton();
                 return true;
             case R.id.settingsMenuId:
                 Intent prefActivity = new Intent(this, DemineurPreference.class);
@@ -355,6 +362,7 @@ public class MainActivity extends AppCompatActivity {
             int i = Integer.parseInt(position[0] + "");
             int j = Integer.parseInt(position[1] + "");
             model.move(i, j);
+            updateJokerButton();
             if(timer == null)
                 initTimer(); // the cloak starts after the first move
             updateGrid();
@@ -363,13 +371,41 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private void updateFlagButton() {
-        if(model.isFlagMode()) {
-            flagButton.setBackgroundResource(R.drawable.flag_red);
-            flagButton.setBackgroundResource(R.color.flagPressed);
+        if(model.isFlagMode())
+            flagButton.setImageResource(R.drawable.flag_red);
+        else
+            flagButton.setImageResource(R.drawable.just_flag);
+    }
+
+    private void updateJokerButton() {
+        MenuItem jokerItem = menu.findItem(R.id.jokerMenuId);
+        MenuItem safeJokerItem = menu.findItem(R.id.safeJokerMenuId);
+        MenuItem burstJokerItem = menu.findItem(R.id.burstJokerMenuId);
+        jokerItem.setIcon(R.drawable.joker);
+        if(model.isSafeModeJoker() || model.isBurstModeJoker()) {
+            jokerItem.setIcon(R.drawable.joker_jaune);
+            if(model.isSafeModeJoker())
+                Toast.makeText(this, getResources().getString(R.string.safeModeActivated), Toast.LENGTH_SHORT).show();
+            else
+                Toast.makeText(this, getResources().getString(R.string.burstModeActivated), Toast.LENGTH_SHORT).show();
+        }
+        else
+            jokerItem.setIcon(R.drawable.joker);
+        if(model.isSafeJokerUsed()) {
+            safeJokerItem.setIcon(R.drawable.croix);
+            safeJokerItem.setEnabled(false);
         }
         else {
-            flagButton.setBackgroundResource(R.drawable.just_flag);
-            //flagButton.setBackgroundResource(R.color.gameBackground);
+            safeJokerItem.setIcon(null);
+            safeJokerItem.setEnabled(true);
+        }
+        if(model.isBurstJokerUsed()){
+            burstJokerItem.setIcon(R.drawable.croix);
+            burstJokerItem.setEnabled(false);
+        }
+        else {
+            burstJokerItem.setIcon(null);
+            burstJokerItem.setEnabled(true);
         }
     }
 
