@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#273342</color>
     <color name="colorPrimaryDark">#0e1218</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#201f2a</color>
     <color name="gameBackground">#3d4f59</color>
     <color name="flagPressed">#8a4c4c</color>
     <color name="white">#f4f4f4</color>

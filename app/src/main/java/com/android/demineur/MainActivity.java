@@ -176,7 +176,8 @@ public class MainActivity extends AppCompatActivity {
         }
         minesCountText.setText(getResources().getString(R.string.count_mines, model.getRemainingCountMines()));
         timeText.setText(getResources().getString(R.string.timer, 0, 0));
-        flagButton.setBackgroundResource(R.color.gameBackground);
+        flagButton.setBackgroundResource(R.drawable.just_flag);
+        //flagButton.setBackgroundResource(R.color.gameBackground);
     }
 
     private void restartGame() {
@@ -362,10 +363,14 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private void updateFlagButton() {
-        if(model.isFlagMode())
+        if(model.isFlagMode()) {
+            flagButton.setBackgroundResource(R.drawable.flag_red);
             flagButton.setBackgroundResource(R.color.flagPressed);
-        else
-            flagButton.setBackgroundResource(R.color.gameBackground);
+        }
+        else {
+            flagButton.setBackgroundResource(R.drawable.just_flag);
+            //flagButton.setBackgroundResource(R.color.gameBackground);
+        }
     }
 
     private void updateGrid() {

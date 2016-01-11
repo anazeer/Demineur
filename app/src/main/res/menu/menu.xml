@@ -6,7 +6,7 @@
         android:id="@+id/jokerMenuId"
         android:title="@string/joker"
         com.android.demineur:showAsAction="ifRoom"
-        android:icon="@drawable/menu"
+        android:icon="@drawable/joker"
         >
         <menu>
             <item
