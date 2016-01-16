@@ -6,12 +6,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Message;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.menu.ActionMenuItemView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,10 +22,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,7 +49,6 @@ public class MainActivity extends AppCompatActivity {
     private Dialog settingsDialog;
     private AlertDialog.Builder replayDialog;
     private Menu menu;
-    private View settingsLayout;
     private TextView widthValueText;
     private TextView heightValueText;
     private TextView minesValueText;
@@ -55,6 +58,16 @@ public class MainActivity extends AppCompatActivity {
     private CustomHandler customHandler;
     private Timer timer;
     private SharedPreferences preferences;
+
+    private ListView musicList;
+    private Cursor musicCursor;
+    private Dialog musicDialog;
+    private MusicAdapter musicAdapter;
+    private MediaPlayer mediaPlayer;
+    private Button resumeButton;
+    private Button pauseButton;
+    private Button stopButton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,8 +85,10 @@ public class MainActivity extends AppCompatActivity {
                 setNegativeButton(getResources().getString(R.string.no), settingsDialogListener);
         customHandler = new CustomHandler();
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mediaPlayer = new MediaPlayer();
         initModel();
         initSettingsDialog();
+        initMusicDialog();
     }
 
     @Override
@@ -81,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
         model.setPause(true);
         stopTimer();
+        stopMusic();
     }
 
     @Override
@@ -97,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
         model.setPause(true);
         stopTimer();
+        stopMusic();
         Gson gson = new Gson();
         String json = gson.toJson(model);
         SharedPreferences.Editor preferencesEditor = preferences.edit();
@@ -145,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
         settingsDialog.setTitle(getResources().getString(R.string.settings));
         // Il faut désérialiser le layout correspondant aux paramètres pour pouvoir y accéder (inflater)
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
-        settingsLayout = inflater.inflate(R.layout.settings_layout, (ViewGroup) findViewById(R.id.layoutSettingsId));
+        View settingsLayout = inflater.inflate(R.layout.settings_layout, (ViewGroup) findViewById(R.id.layoutSettingsId));
         settingsDialog.setContentView(settingsLayout);
         widthSeekBar = (SeekBar) settingsLayout.findViewById(R.id.widthSeekBarSettingsId);
         heightSeekBar = (SeekBar) settingsLayout.findViewById(R.id.heightSeekBarSettingsId);
@@ -166,6 +183,76 @@ public class MainActivity extends AppCompatActivity {
         widthSeekBar.setMax(DemineurModel.MAX_WIDTH);
         heightSeekBar.setMax(DemineurModel.MAX_HEIGHT);
         minesSeekBar.setMax(model.getMaxMines(model.getHeight(), model.getWidth()));
+    }
+
+    private void initMusicDialog() {
+        musicDialog = new Dialog(this);
+        musicDialog.setTitle(getResources().getString(R.string.musicDialog));
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
+        View musicLayout = inflater.inflate(R.layout.music_layout, (ViewGroup) findViewById(R.id.musicLayoutId));
+        musicDialog.setContentView(musicLayout);
+        String[] proj = { MediaStore.Audio.Media._ID,
+                MediaStore.Audio.Media.DATA,
+                MediaStore.Audio.Media.DISPLAY_NAME,
+                MediaStore.Video.Media.SIZE };
+        musicCursor = managedQuery(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                proj, null, null, null);
+        musicList = (ListView) musicLayout.findViewById(R.id.musicListId);
+        musicAdapter = new MusicAdapter(this, musicCursor);
+        musicList.setAdapter(musicAdapter);
+        musicList.setOnItemClickListener(musicListener);
+        resumeButton = (Button) musicLayout.findViewById(R.id.resumeMusicButtonId);
+        pauseButton = (Button) musicLayout.findViewById(R.id.pauseMusicButtonId);
+        stopButton = (Button) musicLayout.findViewById(R.id.stopMusicButtonId);
+        resumeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mediaPlayer.start();
+                musicDialog.dismiss();
+                resumeButton.setEnabled(false);
+                pauseButton.setEnabled(true);
+                stopButton.setEnabled(true);
+                MenuItem musicItem = menu.findItem(R.id.musicMenuId);
+                musicItem.setIcon(R.drawable.musique_bleu);
+            }
+        });
+        pauseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mediaPlayer.isPlaying())
+                    mediaPlayer.pause();
+                resumeButton.setEnabled(true);
+                pauseButton.setEnabled(false);
+                stopButton.setEnabled(true);
+                MenuItem musicItem = menu.findItem(R.id.musicMenuId);
+                musicItem.setIcon(R.drawable.musique);
+            }
+        });
+        stopButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mediaPlayer.isPlaying())
+                    mediaPlayer.reset();
+                musicDialog.dismiss();
+                resumeButton.setEnabled(false);
+                pauseButton.setEnabled(false);
+                stopButton.setEnabled(false);
+                MenuItem musicItem = menu.findItem(R.id.musicMenuId);
+                musicItem.setIcon(R.drawable.musique);
+            }
+        });
+        resumeButton.setEnabled(false);
+        pauseButton.setEnabled(false);
+        stopButton.setEnabled(false);
+
+    }
+
+    private void stopMusic() {
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+            MenuItem musicItem = menu.findItem(R.id.musicMenuId);
+            musicItem.setIcon(R.drawable.musique);
+        }
     }
 
     public void newGame(int width, int height, int mines) {
@@ -275,13 +362,16 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.newRandomMenuId:
                 Random rand = new Random();
-                int height = rand.nextInt(DemineurModel.MAX_HEIGHT - DemineurModel.MIN_HEIGHT) + DemineurModel.MIN_HEIGHT;
                 int width = rand.nextInt(DemineurModel.MAX_WIDTH - DemineurModel.MIN_WIDTH) + DemineurModel.MIN_WIDTH;
+                int height = rand.nextInt(DemineurModel.MAX_HEIGHT - DemineurModel.MIN_HEIGHT) + DemineurModel.MIN_HEIGHT;
                 int mines = rand.nextInt(model.getMaxMines(height, width) - DemineurModel.MIN_MINES) + DemineurModel.MIN_MINES;
-                newGame(height, width, mines);
+                newGame(width, height, mines);
                 return true;
             case R.id.newCustomMenuId:
                 settingsDialog.show();
+                break;
+            case R.id.musicMenuId:
+                musicDialog.show();
                 break;
             case R.id.safeJokerMenuId:
                 model.activateSafeModeJoker();
@@ -350,6 +440,28 @@ public class MainActivity extends AppCompatActivity {
                 case DialogInterface.BUTTON_NEGATIVE:
                     dialog.dismiss();
                     break;
+            }
+        }
+    };
+
+    AdapterView.OnItemClickListener musicListener = new AdapterView.OnItemClickListener() {
+        public void onItemClick(AdapterView parent, View v, int position, long id) {
+            musicAdapter.setMusicIndex(musicCursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA));
+            musicCursor.moveToPosition(position);
+            String filename = musicCursor.getString(musicAdapter.getMusicIndex());
+            try {
+                mediaPlayer.reset();
+                mediaPlayer.setDataSource(filename);
+                mediaPlayer.prepare();
+                mediaPlayer.start();
+                musicDialog.dismiss();
+                resumeButton.setEnabled(false);
+                pauseButton.setEnabled(true);
+                stopButton.setEnabled(true);
+                MenuItem musicItem = menu.findItem(R.id.musicMenuId);
+                musicItem.setIcon(R.drawable.musique_bleu);
+            } catch(Exception e) {
+                System.out.println(e);
             }
         }
     };

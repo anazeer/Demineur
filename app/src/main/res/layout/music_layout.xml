@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/musicLayoutId"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <Button
+        android:id="@+id/resumeMusicButtonId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/resumeMusic"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"/>
+
+    <Button
+        android:id="@+id/pauseMusicButtonId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/pauseMusic"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@id/resumeMusicButtonId"
+        android:layout_toEndOf="@id/resumeMusicButtonId"/>
+
+    <Button
+        android:id="@+id/stopMusicButtonId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/stopMusic"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@id/resumeMusicButtonId"
+        android:layout_toEndOf="@id/pauseMusicButtonId" />
+
+    <ListView
+        android:id="@+id/musicListId"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/stopMusicButtonId"
+        />
+
+
+
+</RelativeLayout>

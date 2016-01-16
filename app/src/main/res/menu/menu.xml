@@ -3,6 +3,13 @@
     xmlns:com.android.demineur="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/musicMenuId"
+        android:title="@string/music"
+        com.android.demineur:showAsAction="ifRoom"
+        android:icon="@drawable/musique"
+        />
+
+    <item
         android:id="@+id/jokerMenuId"
         android:title="@string/joker"
         com.android.demineur:showAsAction="ifRoom"
