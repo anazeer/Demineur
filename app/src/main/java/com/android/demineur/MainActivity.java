@@ -37,6 +37,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -198,48 +199,28 @@ public class MainActivity extends AppCompatActivity {
         scoreDialog = new Dialog(this);
         scoreDialog.setTitle(getResources().getString(R.string.score));
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
-        View scoreLayout = inflater.inflate(R.layout.score_layout, (ViewGroup) findViewById(R.id.scoreLayoutId)); // We need to inflate the layout in order to access its elements
+        final View scoreLayout = inflater.inflate(R.layout.score_layout, (ViewGroup) findViewById(R.id.scoreLayoutId)); // We need to inflate the layout in order to access its elements
         scoreDialog.setContentView(scoreLayout);
-
-        Set<String> beginnerScore = preferences.getStringSet("beginnerScore", null);
-        TextView[] beginnerTextViews = new TextView[3];
-        beginnerTextViews[0] = (TextView) scoreLayout.findViewById(R.id.firstBeginnerScoreId);
-        beginnerTextViews[1] = (TextView) scoreLayout.findViewById(R.id.secondBeginnerScoreId);
-        beginnerTextViews[2] = (TextView) scoreLayout.findViewById(R.id.thirdBeginnerScoreId);
-        if(beginnerScore == null)
-            for(int i = 0; i < 3; i++)
-                beginnerTextViews[i].setText(getResources().getString(R.string.scoreLine, (i+1), getResources().getString(R.string.noScore)));
-        else {
-            int i = 0;
-            for(String score : beginnerScore) {
-                int intScore = Integer.parseInt(score);
-                beginnerTextViews[i].setText(getResources().getString(R.string.scoreLine, (i+1), getResources().getString(R.string.timer, intScore/60, intScore%60)));
-                i++;
+        scoreDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                TextView[] scoreTextViews = new TextView[3];
+                scoreTextViews[0] = (TextView) scoreLayout.findViewById(R.id.firstBeginnerScoreId);
+                scoreTextViews[1] = (TextView) scoreLayout.findViewById(R.id.secondBeginnerScoreId);
+                scoreTextViews[2] = (TextView) scoreLayout.findViewById(R.id.thirdBeginnerScoreId);
+                updateModeScore("beginnerScore", scoreTextViews);
+                scoreTextViews = new TextView[3];
+                scoreTextViews[0] = (TextView) scoreLayout.findViewById(R.id.firstIntermediateScoreId);
+                scoreTextViews[1] = (TextView) scoreLayout.findViewById(R.id.secondIntermediateScoreId);
+                scoreTextViews[2] = (TextView) scoreLayout.findViewById(R.id.thirdIntermediateScoreId);
+                updateModeScore("intermediateScore", scoreTextViews);
+                scoreTextViews = new TextView[3];
+                scoreTextViews[0] = (TextView) scoreLayout.findViewById(R.id.firstExpertScoreId);
+                scoreTextViews[1] = (TextView) scoreLayout.findViewById(R.id.secondExpertScoreId);
+                scoreTextViews[2] = (TextView) scoreLayout.findViewById(R.id.thirdExpertScoreId);
+                updateModeScore("expertScore", scoreTextViews);
             }
-            for(; i < 3; i++) {
-                beginnerTextViews[i].setText(getResources().getString(R.string.scoreLine, (i+1),getResources().getString(R.string.noScore)));
-            }
-        }
-        /*
-        TreeSet<String> intermediateScore = (TreeSet<String>) preferences.getStringSet("intermediateScore", null);
-        TextView intermediate1TextView = (TextView) scoreLayout.findViewById(R.id.firstIntermediateScoreId);
-        TextView intermediate2TextView = (TextView) scoreLayout.findViewById(R.id.secondIntermediateScoreId);
-        TextView intermediate3TextView = (TextView) scoreLayout.findViewById(R.id.thirdIntermediateScoreId);
-        if(intermediateScore == null) {
-            intermediate1TextView.setText(getResources().getString(R.string.firstScore, R.string.noScore));
-            intermediate2TextView.setText(getResources().getString(R.string.secondScore, R.string.noScore));
-            intermediate3TextView.setText(getResources().getString(R.string.thirdScore, R.string.noScore));
-        }
-
-        TreeSet<String> expertScore = (TreeSet<String>) preferences.getStringSet("expertScore", null);
-        TextView expert1TextView = (TextView) scoreLayout.findViewById(R.id.firstExpertScoreId);
-        TextView expert2TextView = (TextView) scoreLayout.findViewById(R.id.secondExpertScoreId);
-        TextView expert3TextView = (TextView) scoreLayout.findViewById(R.id.thirdExpertScoreId);
-        if(expertScore == null) {
-            expert1TextView.setText(getResources().getString(R.string.firstScore, R.string.noScore));
-            expert2TextView.setText(getResources().getString(R.string.secondScore, R.string.noScore));
-            expert3TextView.setText(getResources().getString(R.string.thirdScore, R.string.noScore));
-        }*/
+        });
     }
 
     /**
@@ -462,8 +443,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateScore() {
-        int newTime = model.getElapsedTime();
-        String newScore = newTime + "";
         String key = null;
         if(model.getWidth() == 9 && model.getHeight() == 9 && model.getMines() == 10) {
             key = "beginnerScore";
@@ -476,14 +455,18 @@ public class MainActivity extends AppCompatActivity {
         }
         if(key == null)
             return;
+        String newScore = model.getElapsedTime() + "";
         Set<String> score = preferences.getStringSet(key, null);
-        TreeSet<String> orderedScore = null;
+        TreeSet<String> orderedScore = new TreeSet<>(new Comparator<String>(){
+            public int compare(String a, String b){
+                return Integer.valueOf(a).compareTo(Integer.valueOf(b));
+            }
+        });
         if(score == null) {
-            score = new HashSet<>();
-            score.add(newScore);
+            orderedScore.add(newScore);
         }
         else {
-            orderedScore = new TreeSet<>(score);
+            orderedScore.addAll(score);
             if(orderedScore.size() == 3 ) {
                 String higher = orderedScore.higher(newScore);
                 if(higher != null) {
@@ -495,6 +478,35 @@ public class MainActivity extends AppCompatActivity {
                 orderedScore.add(newScore);
         }
         preferences.edit().putStringSet(key, orderedScore).apply();
+    }
+
+    /**
+     * Update the given mode score display in the score dialog
+     * @param key : the mode key
+     * @param scoreTextViews : the three textviews to update
+     */
+    private void updateModeScore(String key, TextView[] scoreTextViews) {
+        Set<String> scores = preferences.getStringSet(key, null);
+        if(scores == null)
+            for(int i = 0; i < 3; i++)
+                scoreTextViews[i].setText(getResources().getString(R.string.scoreLine, (i+1), getResources().getString(R.string.noScore)));
+        else {
+            TreeSet<String> orderedScore = new TreeSet<>(new Comparator<String>(){
+                public int compare(String a, String b){
+                    return Integer.valueOf(a).compareTo(Integer.valueOf(b));
+                }
+            });
+            orderedScore.addAll(scores);
+            int i = 0;
+            for(String score : orderedScore) {
+                int intScore = Integer.parseInt(score);
+                scoreTextViews[i].setText(getResources().getString(R.string.scoreLine, (i+1), getResources().getString(R.string.timer, intScore/60, intScore%60)));
+                i++;
+            }
+            for(; i < 3; i++) {
+                scoreTextViews[i].setText(getResources().getString(R.string.scoreLine, (i+1),getResources().getString(R.string.noScore)));
+            }
+        }
     }
 
     @Override
@@ -540,10 +552,14 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.safeJokerMenuId:
                 model.activateSafeModeJoker();
+                model.setFlagMode(false);
+                updateFlagButton();
                 updateJokerButton();
                 return true;
             case R.id.burstJokerMenuId:
                 model.activateBurstModeJoker();
+                model.setFlagMode(false);
+                updateFlagButton();
                 updateJokerButton();
                 return true;
             case R.id.settingsMenuId:
@@ -790,7 +806,7 @@ public class MainActivity extends AppCompatActivity {
                         if(model.isMarked(i, j))
                             imageView.setImageResource(R.drawable.wrong_flag); // the player put a flag on a cell that is not a mine
                     }
-                    imageView.setClickable(false);
+                    imageView.setEnabled(false);
                 }
             }
         }
