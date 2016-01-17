@@ -635,16 +635,16 @@ public final class DemineurModel {
     public void move(int i, int j) {
         if(isFirstMove())
             initCells(i, j);
-        if(isSafeModeJoker())
-            safeMove(i, j);
-        else if(isBurstModeJoker()) {
-            burstMove(i, j);
-        }
-        else if(isFlagMode() && !isDiscovered(i, j)) {
+        if(isFlagMode() && !isDiscovered(i, j)) {
             setMarked(i, j);
         }
         else if(isDiscovered(i, j) && countAdjacent(i, j, "flag") == cells[i][j].ordinal() - 1)
             discoveredMove(i, j);
+        else if(isSafeModeJoker())
+            safeMove(i, j);
+        else if (isBurstModeJoker()) {
+            burstMove(i, j);
+        }
         else if(!isMarked(i, j))
             basicMove(i, j);
     }

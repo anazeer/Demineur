@@ -23,6 +23,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
@@ -34,6 +35,8 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -62,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
     private ListView musicList;
     private Cursor musicCursor;
     private Dialog musicDialog;
-    private MusicAdapter musicAdapter;
+    private ArrayAdapter<String> musicAdapter;
     private MediaPlayer mediaPlayer;
     private Button resumeButton;
     private Button pauseButton;
@@ -191,14 +194,20 @@ public class MainActivity extends AppCompatActivity {
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
         View musicLayout = inflater.inflate(R.layout.music_layout, (ViewGroup) findViewById(R.id.musicLayoutId));
         musicDialog.setContentView(musicLayout);
-        String[] proj = { MediaStore.Audio.Media._ID,
+        String[] projection = { MediaStore.Audio.Media._ID,
                 MediaStore.Audio.Media.DATA,
+                MediaStore.Audio.Media.TITLE,
                 MediaStore.Audio.Media.DISPLAY_NAME,
-                MediaStore.Video.Media.SIZE };
-        musicCursor = managedQuery(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                proj, null, null, null);
+                MediaStore.Video.Media.SIZE,
+                MediaStore.Audio.Media.DURATION};
+        String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
+        musicCursor = getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, projection, selection, null, MediaStore.Audio.Media.TITLE + " ASC");
         musicList = (ListView) musicLayout.findViewById(R.id.musicListId);
-        musicAdapter = new MusicAdapter(this, musicCursor);
+        List<String> list = new ArrayList<>();
+        while(musicCursor.moveToNext()) {
+            list.add(musicCursor.getString(musicCursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE)));
+        }
+        musicAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, list);
         musicList.setAdapter(musicAdapter);
         musicList.setOnItemClickListener(musicListener);
         resumeButton = (Button) musicLayout.findViewById(R.id.resumeMusicButtonId);
@@ -253,6 +262,7 @@ public class MainActivity extends AppCompatActivity {
             MenuItem musicItem = menu.findItem(R.id.musicMenuId);
             musicItem.setIcon(R.drawable.musique);
         }
+        musicCursor.close();
     }
 
     public void newGame(int width, int height, int mines) {
@@ -302,6 +312,7 @@ public class MainActivity extends AppCompatActivity {
                 imageView.setAdjustViewBounds(true);
                 imageView.setTag(i + "-" + j);
                 imageView.setOnClickListener(cellListener);
+                imageView.setOnLongClickListener(cellLongListener);
                 gridLayout.addView(imageView, i * model.getWidth() + j);
             }
         }
@@ -446,9 +457,9 @@ public class MainActivity extends AppCompatActivity {
 
     AdapterView.OnItemClickListener musicListener = new AdapterView.OnItemClickListener() {
         public void onItemClick(AdapterView parent, View v, int position, long id) {
-            musicAdapter.setMusicIndex(musicCursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA));
+            int musicIndex = musicCursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA);
             musicCursor.moveToPosition(position);
-            String filename = musicCursor.getString(musicAdapter.getMusicIndex());
+            String filename = musicCursor.getString(musicIndex);
             try {
                 mediaPlayer.reset();
                 mediaPlayer.setDataSource(filename);
@@ -480,6 +491,21 @@ public class MainActivity extends AppCompatActivity {
             updateGrid();
         }
 
+    };
+
+    View.OnLongClickListener cellLongListener = new View.OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            boolean flag = model.isFlagMode();
+            model.setFlagMode(true);
+            v.performClick();
+            model.setFlagMode(flag);
+            if(preferences.getBoolean("vibrationPrefId", true)) {
+                Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                vibrator.vibrate(50);
+            }
+            return true;
+        }
     };
 
     private void updateFlagButton() {
