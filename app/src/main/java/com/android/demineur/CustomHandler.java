@@ -4,6 +4,9 @@ import android.os.Handler;
 import android.os.Message;
 import android.widget.TextView;
 
+/**
+ * Custom Handler for timer update
+ */
 public class CustomHandler extends Handler {
 
     @Override

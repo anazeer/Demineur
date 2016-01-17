@@ -4,6 +4,7 @@
     android:shareInterpolator="true"
     android:repeatCount="1"
     >
+
     <translate
         android:fromXDelta="0%"
         android:toXDelta="-1%"

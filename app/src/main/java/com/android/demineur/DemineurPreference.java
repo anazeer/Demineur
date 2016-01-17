@@ -4,6 +4,9 @@ import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 
+/**
+ * Preferences activity for game settings
+ */
 public class DemineurPreference extends PreferenceActivity {
 
     @Override
@@ -20,5 +23,4 @@ public class DemineurPreference extends PreferenceActivity {
             addPreferencesFromResource(R.xml.preference);
         }
     }
-
 }

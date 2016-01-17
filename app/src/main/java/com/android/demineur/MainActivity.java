@@ -14,6 +14,7 @@ import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -43,30 +44,46 @@ import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
 
+    /**
+     * Game operations
+     */
     private DemineurModel model;
+    private AlertDialog.Builder replayDialog;
+    private Menu menu;
+
+    /**
+     * UI operations
+     */
     private GridLayout gridLayout;
+    private ImageButton flagButton;
+    private TextView minesCountText;
     private Animation animation;
+
+    /**
+     * Settings operation
+     */
+    private SharedPreferences preferences;
+    private Dialog settingsDialog;
     private SeekBar widthSeekBar;
     private SeekBar heightSeekBar;
     private SeekBar minesSeekBar;
-    private Dialog settingsDialog;
-    private AlertDialog.Builder replayDialog;
-    private Menu menu;
     private TextView widthValueText;
     private TextView heightValueText;
     private TextView minesValueText;
-    private ImageButton flagButton;
-    private TextView minesCountText;
+
+    /**
+     * Timer operations
+     */
+    private Timer timer;
     private TextView timeText;
     private CustomHandler customHandler;
-    private Timer timer;
-    private SharedPreferences preferences;
 
-    private ListView musicList;
+    /**
+     * Music operations
+     */
+    private MediaPlayer mediaPlayer;
     private Cursor musicCursor;
     private Dialog musicDialog;
-    private ArrayAdapter<String> musicAdapter;
-    private MediaPlayer mediaPlayer;
     private Button resumeButton;
     private Button pauseButton;
     private Button stopButton;
@@ -75,7 +92,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        assert getSupportActionBar() != null; // Prevent from the possible NullPointerException warning
+        getSupportActionBar().setDisplayShowTitleEnabled(false); // Unshow game titlz in menu
         setContentView(R.layout.grid_layout);
         gridLayout = (GridLayout) findViewById(R.id.gridId);
         flagButton = (ImageButton) findViewById(R.id.flagButtonId);
@@ -135,37 +153,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Retrieves the model if it has been saved, otherwise creates a new model
+     * Initialize the custom game dialog interface
      */
-    private void initModel() {
-        model = (DemineurModel) getLastCustomNonConfigurationInstance();
-        if(model == null) {
-            Gson gson = new Gson();
-            String json = preferences.getString("model", "");
-            model = gson.fromJson(json, DemineurModel.class);
-            if(model != null && model.isGameOver())
-                model = null;
-        }
-        if(model != null)
-            restartGame();
-        else {
-            String[] gridSizes = getResources().getStringArray(R.array.grid_size_array);
-            String pref = preferences.getString("gridSizePrefId", gridSizes[0]);
-            if (pref.equals(gridSizes[0]))
-                newGame(9, 9, 10);
-            else if (pref.equals(gridSizes[1]))
-                newGame(16, 16, 40);
-            else if (pref.equals(gridSizes[2]))
-                newGame(30, 16, 99);
-        }
-    }
-
     private void initSettingsDialog() {
         settingsDialog = new Dialog(this);
         settingsDialog.setTitle(getResources().getString(R.string.settings));
-        // Il faut désérialiser le layout correspondant aux paramètres pour pouvoir y accéder (inflater)
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
-        View settingsLayout = inflater.inflate(R.layout.settings_layout, (ViewGroup) findViewById(R.id.layoutSettingsId));
+        View settingsLayout = inflater.inflate(R.layout.settings_layout, (ViewGroup) findViewById(R.id.layoutSettingsId)); // We need to inflate the layout in order to access its elements
         settingsDialog.setContentView(settingsLayout);
         widthSeekBar = (SeekBar) settingsLayout.findViewById(R.id.widthSeekBarSettingsId);
         heightSeekBar = (SeekBar) settingsLayout.findViewById(R.id.heightSeekBarSettingsId);
@@ -188,12 +182,17 @@ public class MainActivity extends AppCompatActivity {
         minesSeekBar.setMax(model.getMaxMines(model.getHeight(), model.getWidth()));
     }
 
+    /**
+     * Initialize the music chooser dialog interface
+     */
     private void initMusicDialog() {
         musicDialog = new Dialog(this);
         musicDialog.setTitle(getResources().getString(R.string.musicDialog));
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
-        View musicLayout = inflater.inflate(R.layout.music_layout, (ViewGroup) findViewById(R.id.musicLayoutId));
+        View musicLayout = inflater.inflate(R.layout.music_layout, (ViewGroup) findViewById(R.id.musicLayoutId)); // We need to inflate the layout in order to access its elements
         musicDialog.setContentView(musicLayout);
+
+        // Initialize the music list
         String[] projection = { MediaStore.Audio.Media._ID,
                 MediaStore.Audio.Media.DATA,
                 MediaStore.Audio.Media.TITLE,
@@ -202,14 +201,15 @@ public class MainActivity extends AppCompatActivity {
                 MediaStore.Audio.Media.DURATION};
         String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
         musicCursor = getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, projection, selection, null, MediaStore.Audio.Media.TITLE + " ASC");
-        musicList = (ListView) musicLayout.findViewById(R.id.musicListId);
         List<String> list = new ArrayList<>();
-        while(musicCursor.moveToNext()) {
+        while(musicCursor.moveToNext())
             list.add(musicCursor.getString(musicCursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE)));
-        }
-        musicAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, list);
+        ArrayAdapter<String> musicAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, list);
+        ListView musicList = (ListView) musicLayout.findViewById(R.id.musicListId);
         musicList.setAdapter(musicAdapter);
         musicList.setOnItemClickListener(musicListener);
+
+        // Initialize the resume, pause and stop buttons of the dialog
         resumeButton = (Button) musicLayout.findViewById(R.id.resumeMusicButtonId);
         pauseButton = (Button) musicLayout.findViewById(R.id.pauseMusicButtonId);
         stopButton = (Button) musicLayout.findViewById(R.id.stopMusicButtonId);
@@ -228,7 +228,7 @@ public class MainActivity extends AppCompatActivity {
         pauseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mediaPlayer.isPlaying())
+                if (mediaPlayer.isPlaying())
                     mediaPlayer.pause();
                 resumeButton.setEnabled(true);
                 pauseButton.setEnabled(false);
@@ -240,7 +240,7 @@ public class MainActivity extends AppCompatActivity {
         stopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mediaPlayer.isPlaying())
+                if (mediaPlayer.isPlaying())
                     mediaPlayer.reset();
                 musicDialog.dismiss();
                 resumeButton.setEnabled(false);
@@ -256,50 +256,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void stopMusic() {
-        if (mediaPlayer != null) {
-            mediaPlayer.release();
-            MenuItem musicItem = menu.findItem(R.id.musicMenuId);
-            musicItem.setIcon(R.drawable.musique);
-        }
-        musicCursor.close();
-    }
-
-    public void newGame(int width, int height, int mines) {
-        stopTimer();
-        model = new DemineurModel(width, height, mines);
-        initGrid();
-        if(preferences.getBoolean("animPrefId", true)) {
-            animation = AnimationUtils.loadAnimation(this, R.anim.move);
-            gridLayout.startAnimation(animation);
-        }
-        minesCountText.setText(getResources().getString(R.string.count_mines, model.getRemainingCountMines()));
-        timeText.setText(getResources().getString(R.string.timer, 0, 0));
-        flagButton.setImageResource(R.drawable.just_flag);
-        if(menu != null)
-            updateJokerButton();
-    }
-
-    private void restartGame() {
-        initGrid();
-        updateGrid();
-        updateFlagButton();
-        int time = model.getElapsedTime();
-        Message msg = customHandler.obtainMessage(0, time/60, time%60, timeText);
-        customHandler.sendMessage(msg);
-    }
-
-    private void lose() {
-        if(preferences.getBoolean("animPrefId", true)) {
-            animation = AnimationUtils.loadAnimation(this, R.anim.explosion);
-            gridLayout.startAnimation(animation);
-        }
-        if(preferences.getBoolean("vibrationPrefId", true)) {
-            Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-            vibrator.vibrate(500);
-        }
-    }
-
+    /**
+     * Initialize a new grid with fresh ImageViews
+     */
     private void initGrid() {
         gridLayout.removeAllViews();
         gridLayout.setColumnCount(model.getWidth());
@@ -338,11 +297,106 @@ public class MainActivity extends AppCompatActivity {
         timer.scheduleAtFixedRate(task, 0, 1000);
     }
 
+    /**
+     * Properly stop the timer
+     */
     private void stopTimer() {
         if(timer != null) {
             timer.cancel();
             timer.purge();
             timer = null;
+        }
+    }
+
+    /**
+     * Stop music service before exiting the application
+     */
+    private void stopMusic() {
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+            MenuItem musicItem = menu.findItem(R.id.musicMenuId);
+            musicItem.setIcon(R.drawable.musique);
+        }
+        musicCursor.close();
+    }
+
+    /**
+     * Retrieves the model if it has been saved, otherwise creates a new model
+     */
+    private void initModel() {
+        model = (DemineurModel) getLastCustomNonConfigurationInstance();
+        if(model == null) {
+            Gson gson = new Gson();
+            String json = preferences.getString("model", "");
+            model = gson.fromJson(json, DemineurModel.class);
+            if(model != null && model.isGameOver()) // Begin a new game if the old one is done or hasn't started
+                model = null;
+        }
+        if(model != null)
+            restartGame();
+        else {
+            String[] gridSizes = getResources().getStringArray(R.array.grid_size_array);
+            String pref = preferences.getString("gridSizePrefId", gridSizes[0]);
+            if (pref.equals(gridSizes[0]))
+                newGame(9, 9, 10);
+            else if (pref.equals(gridSizes[1]))
+                newGame(16, 16, 40);
+            else if (pref.equals(gridSizes[2]))
+                newGame(30, 16, 99);
+        }
+    }
+
+    /**
+     * Begin a new game with a new model
+     */
+    private void newGame(int width, int height, int mines) {
+        stopTimer();
+        model = new DemineurModel(width, height, mines);
+        initGrid();
+        if(preferences.getBoolean("animPrefId", true)) {
+            animation = AnimationUtils.loadAnimation(this, R.anim.move);
+            gridLayout.startAnimation(animation);
+        }
+        minesCountText.setText(getResources().getString(R.string.count_mines, model.getRemainingCountMines()));
+        timeText.setText(getResources().getString(R.string.timer, 0, 0));
+        flagButton.setImageResource(R.drawable.just_flag);
+        if(menu != null)
+            updateJokerButton();
+    }
+
+    /**
+     * Initialize the UI with an existing model
+     */
+    private void restartGame() {
+        initGrid();
+        updateGrid();
+        updateFlagButton();
+        int time = model.getElapsedTime();
+        Message msg = customHandler.obtainMessage(0, time/ 60, time%60, timeText);
+        customHandler.sendMessage(msg);
+    }
+
+    /**
+     * Show the winning dialog and replay buttons
+     */
+    private void win() {
+        String result = model.isWon() ? getResources().getString(R.string.won) : getResources().getString(R.string.lost);
+        Toast.makeText(MainActivity.this, getResources().getString(R.string.result, result), Toast.LENGTH_SHORT).show();
+        replayDialog.setTitle(getResources().getString(R.string.result, result));
+        replayDialog.show();
+    }
+
+    /**
+     * Play the lose animation
+     */
+    private void lose() {
+        if(preferences.getBoolean("animPrefId", true)) {
+            animation = AnimationUtils.loadAnimation(this, R.anim.explosion);
+            gridLayout.startAnimation(animation);
+        }
+        if(preferences.getBoolean("vibrationPrefId", true)) {
+            Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            vibrator.vibrate(500);
         }
     }
 
@@ -400,6 +454,9 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * The custom game menu SeekBars listener
+     */
     SeekBar.OnSeekBarChangeListener seekBarListener = new SeekBar.OnSeekBarChangeListener() {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -417,6 +474,9 @@ public class MainActivity extends AppCompatActivity {
         public void onStopTrackingTouch(SeekBar seekBar) {}
     };
 
+    /**
+     * The custom game settings dialog listener
+     */
     Button.OnClickListener settingsClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -433,6 +493,9 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    /**
+     * The flag button listener
+     */
     View.OnClickListener setFlagModeListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -441,6 +504,9 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    /**
+     * The replay dialog buttons listener
+     */
     DialogInterface.OnClickListener settingsDialogListener = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialog, int which) {
@@ -455,6 +521,9 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    /**
+     * The music list listener
+     */
     AdapterView.OnItemClickListener musicListener = new AdapterView.OnItemClickListener() {
         public void onItemClick(AdapterView parent, View v, int position, long id) {
             int musicIndex = musicCursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA);
@@ -472,11 +541,14 @@ public class MainActivity extends AppCompatActivity {
                 MenuItem musicItem = menu.findItem(R.id.musicMenuId);
                 musicItem.setIcon(R.drawable.musique_bleu);
             } catch(Exception e) {
-                System.out.println(e);
+                Log.e("MainActivity", "MediaPlayer exception", e);
             }
         }
     };
 
+    /**
+     * The cells click listener
+     */
     View.OnClickListener cellListener = new View.OnClickListener(){
         @Override
         public void onClick(View v) {
@@ -493,6 +565,9 @@ public class MainActivity extends AppCompatActivity {
 
     };
 
+    /**
+     * The cells long click listener
+     */
     View.OnLongClickListener cellLongListener = new View.OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
@@ -508,6 +583,9 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    /**
+     * Update the flag button icon
+     */
     private void updateFlagButton() {
         if(model.isFlagMode())
             flagButton.setImageResource(R.drawable.flag_red);
@@ -515,6 +593,9 @@ public class MainActivity extends AppCompatActivity {
             flagButton.setImageResource(R.drawable.just_flag);
     }
 
+    /**
+     * Update the joker menu buttons
+     */
     private void updateJokerButton() {
         MenuItem jokerItem = menu.findItem(R.id.jokerMenuId);
         MenuItem safeJokerItem = menu.findItem(R.id.safeJokerMenuId);
@@ -547,6 +628,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Update the grid depending on the current model state
+     */
     private void updateGrid() {
         minesCountText.setText(getResources().getString(R.string.count_mines, model.getRemainingCountMines()));
         for(int i = 0; i < model.getHeight(); i++) {
@@ -560,7 +644,7 @@ public class MainActivity extends AppCompatActivity {
                 else {
                     switch(model.getCell(i, j)) {
                         case MINE:
-                            assert(false);
+                            //assert(false);
                         case EMPTY:
                             imageView.setImageResource(R.drawable.case_0);
                             break;
@@ -611,14 +695,10 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         if (model.isWon()) {
-            String result = model.isWon() ? getResources().getString(R.string.won) : getResources().getString(R.string.lost);
-            Toast.makeText(MainActivity.this, getResources().getString(R.string.result, result), Toast.LENGTH_SHORT).show();
-            replayDialog.setTitle(getResources().getString(R.string.result, result));
-            replayDialog.show();
+            win();
         }
         else if(model.isLost()) {
             lose();
         }
     }
-
 }

@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    >
 
 <PreferenceCategory
-    android:title="@string/grid_preference">
+    android:title="@string/grid_preference"
+    >
 
     <ListPreference
         android:key="gridSizePrefId"
@@ -15,12 +17,14 @@
         android:negativeButtonText="@string/cancel"
         android:defaultValue="@string/new_beginner"
         />
+
     <CheckBoxPreference
         android:key="animPrefId"
         android:title="@string/anim_pref_title"
         android:summary="@string/anim_pref_summary"
         android:defaultValue="true"
         />
+
     <CheckBoxPreference
         android:key="vibrationPrefId"
         android:title="@string/vibration_pref_title"

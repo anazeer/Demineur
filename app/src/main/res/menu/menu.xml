@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:com.android.demineur="http://schemas.android.com/apk/res-auto">
+    xmlns:com.android.demineur="http://schemas.android.com/apk/res-auto"
+    >
 
     <item
         android:id="@+id/musicMenuId"
@@ -68,7 +69,9 @@
             </item>
             <item
                 android:id="@+id/settingsMenuId"
-                android:title="@string/settings"/>
+                android:title="@string/settings"
+                />
         </menu>
     </item>
+
 </menu>

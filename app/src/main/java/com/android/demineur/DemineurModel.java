@@ -1,5 +1,7 @@
 package com.android.demineur;
 
+import android.util.Log;
+
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -159,15 +161,6 @@ public final class DemineurModel {
     }
 
     /**
-     * Construct a new Minesweeper model
-     * @param width : number of columns
-     * @param height : number of rows
-     */
-    public DemineurModel(int width, int height) {
-        this(width, height, width + height/2);
-    }
-
-    /**
      * Initialize the game grid depending on the first move, so the player can't lose at the beginning
      * @param i : the row of the first move
      * @param j : the column of the first move
@@ -198,7 +191,6 @@ public final class DemineurModel {
                         case 6 : cells[i][j] = Cell.SIX; break;
                         case 7 : cells[i][j] = Cell.SEVEN; break;
                         case 8 : cells[i][j] = Cell.EIGHT; break;
-                        default : assert(false); //System.err.println("ERROR : error on neighbours numbers");
                     }
                 }
             }
@@ -245,6 +237,16 @@ public final class DemineurModel {
      */
     private boolean isFirstMove() {
         return cells == null;
+    }
+
+    /**
+     *
+     * @param i : the cell row
+     * @param j : the cell column
+     * @return the (i, j) cell content
+     */
+    public Cell getCell(int i, int j) {
+        return cells[i][j];
     }
 
     /**
@@ -373,7 +375,7 @@ public final class DemineurModel {
 
     /**
      *
-     * @param burstJokerUsed
+     * @param burstJokerUsed : true if the burst joker has been used
      */
     private void setBurstJokerUsed(boolean burstJokerUsed) {
         this.burstJokerUsed = burstJokerUsed;
@@ -389,20 +391,10 @@ public final class DemineurModel {
 
     /**
      *
-     * @param safeJokerUsed
+     * @param safeJokerUsed : true if the safe joker has been used
      */
     private void setSafeJokerUsed(boolean safeJokerUsed) {
         this.safeJokerUsed = safeJokerUsed;
-    }
-
-    /**
-     *
-     * @param i : the cell row
-     * @param j : the cell column
-     * @return the (i, j) cell content
-     */
-    public Cell getCell(int i, int j) {
-        return cells[i][j];
     }
 
     /**
@@ -462,7 +454,6 @@ public final class DemineurModel {
                         count++;
                 }
                 catch(IndexOutOfBoundsException e) {
-                    continue;
                 }
             }
         }
@@ -486,7 +477,6 @@ public final class DemineurModel {
                     }
                 }
                 catch(IndexOutOfBoundsException e) {
-                    continue;
                 }
             }
         }
@@ -521,13 +511,11 @@ public final class DemineurModel {
                 try {
                     Cell c = cells[m + i][n + j];
                     switch(c) {
-                        case MINE : assert(false); //System.err.println("ERROR : invalid grid"); System.exit(-1);
                         case EMPTY : setAdjacentEmptyDiscovered(m + i, n + j); break;
                         default : setDiscovered(m + i, n + j); break;
                     }
                 }
                 catch(IndexOutOfBoundsException e) {
-                    continue;
                 }
             }
         }
@@ -578,7 +566,6 @@ public final class DemineurModel {
                         basicMove(m + i, n + j);
                 }
                 catch(IndexOutOfBoundsException e) {
-                    continue;
                 }
             }
         }
@@ -619,7 +606,6 @@ public final class DemineurModel {
                     }
                 }
                 catch(IndexOutOfBoundsException e) {
-                    continue;
                 }
             }
         }
