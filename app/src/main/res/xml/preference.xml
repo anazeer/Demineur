@@ -15,7 +15,7 @@
         android:dialogTitle="@string/grid_size_pref_title"
         android:positiveButtonText="@string/accept"
         android:negativeButtonText="@string/cancel"
-        android:defaultValue="@string/new_beginner"
+        android:defaultValue="@string/beginner"
         />
 
     <CheckBoxPreference

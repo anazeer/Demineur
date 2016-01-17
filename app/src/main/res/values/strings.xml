@@ -4,10 +4,10 @@
 
     <string name="menu">Menu</string>
     <string name="new_game">New game</string>
-    <string name="new_beginner">Beginner</string>
-    <string name="new_intermediate">Intermediate</string>
-    <string name="new_expert">Expert</string>
-    <string name="new_random">Random</string>
+    <string name="beginner">Beginner</string>
+    <string name="intermediate">Intermediate</string>
+    <string name="expert">Expert</string>
+    <string name="random">Random</string>
     <string name="new_custom">Custom&#8230;</string>
 
     <string name="dialog_replay">Do you want to replay ?</string>
@@ -49,6 +49,10 @@
     <string name="resumeMusic">Resume</string>
     <string name="pauseMusic">Pause</string>
     <string name="stopMusic">Stop</string>
+
+    <string name="score">Score</string>
+    <string name="scoreLine">%1$d. %2$s</string>
+    <string name="noScore">No best score yet !</string>
 
     <string name="flagDesc">Activate/deactivate the flag mode</string>
 

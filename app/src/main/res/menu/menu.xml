@@ -47,19 +47,19 @@
                 <menu>
                     <item
                         android:id="@+id/newBeginnerMenuId"
-                        android:title="@string/new_beginner"
+                        android:title="@string/beginner"
                         />
                     <item
                         android:id="@+id/newIntermediateMenuId"
-                        android:title="@string/new_intermediate"
+                        android:title="@string/intermediate"
                         />
                     <item
                         android:id="@+id/newExpertMenuId"
-                        android:title="@string/new_expert"
+                        android:title="@string/expert"
                         />
                     <item
                         android:id="@+id/newRandomMenuId"
-                        android:title="@string/new_random"
+                        android:title="@string/random"
                         />
                     <item
                         android:id="@+id/newCustomMenuId"
@@ -67,6 +67,10 @@
                         />
                 </menu>
             </item>
+            <item
+                android:id="@+id/scoreMenuId"
+                android:title="@string/score"
+                />
             <item
                 android:id="@+id/settingsMenuId"
                 android:title="@string/settings"

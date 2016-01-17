@@ -37,10 +37,13 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.TreeSet;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -79,6 +82,11 @@ public class MainActivity extends AppCompatActivity {
     private CustomHandler customHandler;
 
     /**
+     * Scores operations
+     */
+    private Dialog scoreDialog;
+
+    /**
      * Music operations
      */
     private MediaPlayer mediaPlayer;
@@ -109,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
         mediaPlayer = new MediaPlayer();
         initModel();
         initSettingsDialog();
+        initScoreDialog();
         initMusicDialog();
     }
 
@@ -180,6 +189,57 @@ public class MainActivity extends AppCompatActivity {
         widthSeekBar.setMax(DemineurModel.MAX_WIDTH);
         heightSeekBar.setMax(DemineurModel.MAX_HEIGHT);
         minesSeekBar.setMax(model.getMaxMines(model.getHeight(), model.getWidth()));
+    }
+
+    /**
+     * Initialize the scores dialog interface
+     */
+    private void initScoreDialog() {
+        scoreDialog = new Dialog(this);
+        scoreDialog.setTitle(getResources().getString(R.string.score));
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
+        View scoreLayout = inflater.inflate(R.layout.score_layout, (ViewGroup) findViewById(R.id.scoreLayoutId)); // We need to inflate the layout in order to access its elements
+        scoreDialog.setContentView(scoreLayout);
+
+        Set<String> beginnerScore = preferences.getStringSet("beginnerScore", null);
+        TextView[] beginnerTextViews = new TextView[3];
+        beginnerTextViews[0] = (TextView) scoreLayout.findViewById(R.id.firstBeginnerScoreId);
+        beginnerTextViews[1] = (TextView) scoreLayout.findViewById(R.id.secondBeginnerScoreId);
+        beginnerTextViews[2] = (TextView) scoreLayout.findViewById(R.id.thirdBeginnerScoreId);
+        if(beginnerScore == null)
+            for(int i = 0; i < 3; i++)
+                beginnerTextViews[i].setText(getResources().getString(R.string.scoreLine, (i+1), getResources().getString(R.string.noScore)));
+        else {
+            int i = 0;
+            for(String score : beginnerScore) {
+                int intScore = Integer.parseInt(score);
+                beginnerTextViews[i].setText(getResources().getString(R.string.scoreLine, (i+1), getResources().getString(R.string.timer, intScore/60, intScore%60)));
+                i++;
+            }
+            for(; i < 3; i++) {
+                beginnerTextViews[i].setText(getResources().getString(R.string.scoreLine, (i+1),getResources().getString(R.string.noScore)));
+            }
+        }
+        /*
+        TreeSet<String> intermediateScore = (TreeSet<String>) preferences.getStringSet("intermediateScore", null);
+        TextView intermediate1TextView = (TextView) scoreLayout.findViewById(R.id.firstIntermediateScoreId);
+        TextView intermediate2TextView = (TextView) scoreLayout.findViewById(R.id.secondIntermediateScoreId);
+        TextView intermediate3TextView = (TextView) scoreLayout.findViewById(R.id.thirdIntermediateScoreId);
+        if(intermediateScore == null) {
+            intermediate1TextView.setText(getResources().getString(R.string.firstScore, R.string.noScore));
+            intermediate2TextView.setText(getResources().getString(R.string.secondScore, R.string.noScore));
+            intermediate3TextView.setText(getResources().getString(R.string.thirdScore, R.string.noScore));
+        }
+
+        TreeSet<String> expertScore = (TreeSet<String>) preferences.getStringSet("expertScore", null);
+        TextView expert1TextView = (TextView) scoreLayout.findViewById(R.id.firstExpertScoreId);
+        TextView expert2TextView = (TextView) scoreLayout.findViewById(R.id.secondExpertScoreId);
+        TextView expert3TextView = (TextView) scoreLayout.findViewById(R.id.thirdExpertScoreId);
+        if(expertScore == null) {
+            expert1TextView.setText(getResources().getString(R.string.firstScore, R.string.noScore));
+            expert2TextView.setText(getResources().getString(R.string.secondScore, R.string.noScore));
+            expert3TextView.setText(getResources().getString(R.string.thirdScore, R.string.noScore));
+        }*/
     }
 
     /**
@@ -380,6 +440,7 @@ public class MainActivity extends AppCompatActivity {
      * Show the winning dialog and replay buttons
      */
     private void win() {
+        updateScore();
         String result = model.isWon() ? getResources().getString(R.string.won) : getResources().getString(R.string.lost);
         Toast.makeText(MainActivity.this, getResources().getString(R.string.result, result), Toast.LENGTH_SHORT).show();
         replayDialog.setTitle(getResources().getString(R.string.result, result));
@@ -398,6 +459,42 @@ public class MainActivity extends AppCompatActivity {
             Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
             vibrator.vibrate(500);
         }
+    }
+
+    private void updateScore() {
+        int newTime = model.getElapsedTime();
+        String newScore = newTime + "";
+        String key = null;
+        if(model.getWidth() == 9 && model.getHeight() == 9 && model.getMines() == 10) {
+            key = "beginnerScore";
+        }
+        else if(model.getWidth() == 16 && model.getHeight() == 16 && model.getMines() == 40) {
+            key = "intermediateScore";
+        }
+        else if(model.getWidth() == 30 && model.getHeight() == 16 && model.getMines() == 99) {
+            key = "expertScore";
+        }
+        if(key == null)
+            return;
+        Set<String> score = preferences.getStringSet(key, null);
+        TreeSet<String> orderedScore = null;
+        if(score == null) {
+            score = new HashSet<>();
+            score.add(newScore);
+        }
+        else {
+            orderedScore = new TreeSet<>(score);
+            if(orderedScore.size() == 3 ) {
+                String higher = orderedScore.higher(newScore);
+                if(higher != null) {
+                    orderedScore.remove(orderedScore.last());
+                    orderedScore.add(newScore);
+                }
+            }
+            else
+                orderedScore.add(newScore);
+        }
+        preferences.edit().putStringSet(key, orderedScore).apply();
     }
 
     @Override
@@ -434,6 +531,9 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.newCustomMenuId:
                 settingsDialog.show();
+                break;
+            case R.id.scoreMenuId:
+                scoreDialog.show();
                 break;
             case R.id.musicMenuId:
                 musicDialog.show();
