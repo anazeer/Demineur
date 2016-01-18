@@ -38,7 +38,6 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -106,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.grid_layout);
         gridLayout = (GridLayout) findViewById(R.id.gridId);
         flagButton = (ImageButton) findViewById(R.id.flagButtonId);
-        flagButton.setOnClickListener(setFlagModeListener);
+        flagButton.setOnClickListener(flagModeListener);
         minesCountText = (TextView) findViewById(R.id.minesId);
         timeText = (TextView) findViewById(R.id.timeId);
         replayDialog = new AlertDialog.Builder(this);
@@ -115,7 +114,6 @@ public class MainActivity extends AppCompatActivity {
                 setNegativeButton(getResources().getString(R.string.no), settingsDialogListener);
         customHandler = new CustomHandler();
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        mediaPlayer = new MediaPlayer();
         initModel();
         initSettingsDialog();
         initScoreDialog();
@@ -135,8 +133,8 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         if(model.isGameOver())
             return;
-        model.setPause(false);
         initTimer();
+        initMusic();
     }
 
     @Override
@@ -184,12 +182,17 @@ public class MainActivity extends AppCompatActivity {
         widthValueText = (TextView) settingsLayout.findViewById(R.id.widthValueId);
         heightValueText = (TextView) settingsLayout.findViewById(R.id.heightValueId);
         minesValueText = (TextView) settingsLayout.findViewById(R.id.minesValueId);
-        widthSeekBar.setProgress(model.getWidth());
-        heightSeekBar.setProgress(model.getHeight());
-        minesSeekBar.setProgress(model.getMines());
-        widthSeekBar.setMax(DemineurModel.MAX_WIDTH);
-        heightSeekBar.setMax(DemineurModel.MAX_HEIGHT);
-        minesSeekBar.setMax(model.getMaxMines(model.getHeight(), model.getWidth()));
+        settingsDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                widthSeekBar.setProgress(model.getWidth());
+                heightSeekBar.setProgress(model.getHeight());
+                minesSeekBar.setProgress(model.getMines());
+                widthSeekBar.setMax(DemineurModel.MAX_WIDTH);
+                heightSeekBar.setMax(DemineurModel.MAX_HEIGHT);
+                minesSeekBar.setMax(model.getMaxMines(model.getHeight(), model.getWidth()));
+            }
+        });
     }
 
     /**
@@ -234,14 +237,7 @@ public class MainActivity extends AppCompatActivity {
         musicDialog.setContentView(musicLayout);
 
         // Initialize the music list
-        String[] projection = { MediaStore.Audio.Media._ID,
-                MediaStore.Audio.Media.DATA,
-                MediaStore.Audio.Media.TITLE,
-                MediaStore.Audio.Media.DISPLAY_NAME,
-                MediaStore.Video.Media.SIZE,
-                MediaStore.Audio.Media.DURATION};
-        String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
-        musicCursor = getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, projection, selection, null, MediaStore.Audio.Media.TITLE + " ASC");
+        initMusic();
         List<String> list = new ArrayList<>();
         while(musicCursor.moveToNext())
             list.add(musicCursor.getString(musicCursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE)));
@@ -336,6 +332,7 @@ public class MainActivity extends AppCompatActivity {
         };
         timer = new Timer();
         timer.scheduleAtFixedRate(task, 0, 1000);
+        model.setPause(false);
     }
 
     /**
@@ -347,6 +344,21 @@ public class MainActivity extends AppCompatActivity {
             timer.purge();
             timer = null;
         }
+    }
+
+    /**
+     * Create the music cursor
+     */
+    private void initMusic() {
+        mediaPlayer = new MediaPlayer();
+        String[] projection = { MediaStore.Audio.Media._ID,
+                MediaStore.Audio.Media.DATA,
+                MediaStore.Audio.Media.TITLE,
+                MediaStore.Audio.Media.DISPLAY_NAME,
+                MediaStore.Video.Media.SIZE,
+                MediaStore.Audio.Media.DURATION};
+        String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
+        musicCursor = getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, projection, selection, null, MediaStore.Audio.Media.TITLE + " ASC");
     }
 
     /**
@@ -552,14 +564,10 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.safeJokerMenuId:
                 model.activateSafeModeJoker();
-                model.setFlagMode(false);
-                updateFlagButton();
                 updateJokerButton();
                 return true;
             case R.id.burstJokerMenuId:
                 model.activateBurstModeJoker();
-                model.setFlagMode(false);
-                updateFlagButton();
                 updateJokerButton();
                 return true;
             case R.id.settingsMenuId:
@@ -612,10 +620,14 @@ public class MainActivity extends AppCompatActivity {
     /**
      * The flag button listener
      */
-    View.OnClickListener setFlagModeListener = new View.OnClickListener() {
+    View.OnClickListener flagModeListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             model.setFlagMode(!model.isFlagMode());
+            if(model.isBurstModeJoker() || model.isSafeModeJoker()) {
+                model.deactivateJoker();
+                updateJokerButton();
+            }
             updateFlagButton();
         }
     };

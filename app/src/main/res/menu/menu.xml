@@ -65,17 +65,15 @@
                 android:title="@string/score"
                 />
             <item
+                android:id="@+id/musicMenuId"
+                android:title="@string/music"
+                android:icon="@drawable/musique"
+                />
+            <item
                 android:id="@+id/settingsMenuId"
                 android:title="@string/settings"
                 />
         </menu>
     </item>
-
-    <item
-        android:id="@+id/musicMenuId"
-        android:title="@string/music"
-        com.android.demineur:showAsAction="ifRoom"
-        android:icon="@drawable/musique"
-        />
 
 </menu>

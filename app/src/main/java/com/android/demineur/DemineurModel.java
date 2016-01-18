@@ -1,10 +1,6 @@
 package com.android.demineur;
 
-import android.util.Log;
-
 import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public final class DemineurModel {
 
@@ -282,7 +278,7 @@ public final class DemineurModel {
      * @return the difference between the number of mines and the number of marked cells
      */
     public int getRemainingCountMines() {
-        return MINES - countMarkedCells;
+        return MINES - getCountMarkedCells();
     }
 
     /**
@@ -395,6 +391,14 @@ public final class DemineurModel {
      */
     private void setSafeJokerUsed(boolean safeJokerUsed) {
         this.safeJokerUsed = safeJokerUsed;
+    }
+
+    /**
+     * Deactivate joker mode
+     */
+    public void deactivateJoker() {
+        this.safeModeJoker = false;
+        this.burstModeJoker = false;
     }
 
     /**
@@ -601,8 +605,8 @@ public final class DemineurModel {
             for(int n = -1; n <= 1; n++) {
                 try {
                     switch(cells[i+m][j+n]) {
-                        case MINE: if(!isMarked(i+m, j+n))setMarked(i+m, j+n); break;
-                        default : basicMove(i+m, j+n); break;
+                        case MINE: if(!isMarked(i+m, j+n)) setMarked(i+m, j+n); break;
+                        default : if(isMarked(i+m, j+n)) setMarked(i + m, j + n); basicMove(i+m, j+n); break;
                     }
                 }
                 catch(IndexOutOfBoundsException e) {
@@ -621,16 +625,15 @@ public final class DemineurModel {
     public void move(int i, int j) {
         if(isFirstMove())
             initCells(i, j);
-        if(isFlagMode() && !isDiscovered(i, j)) {
-            setMarked(i, j);
-        }
-        else if(isDiscovered(i, j) && countAdjacent(i, j, "flag") == cells[i][j].ordinal() - 1)
-            discoveredMove(i, j);
-        else if(isSafeModeJoker())
+        if(isSafeModeJoker())
             safeMove(i, j);
         else if (isBurstModeJoker()) {
             burstMove(i, j);
         }
+        else if(isFlagMode() && !isDiscovered(i, j)) {
+            setMarked(i, j);
+        } else if(isDiscovered(i, j) && countAdjacent(i, j, "flag") == cells[i][j].ordinal() - 1)
+            discoveredMove(i, j);
         else if(!isMarked(i, j))
             basicMove(i, j);
     }
