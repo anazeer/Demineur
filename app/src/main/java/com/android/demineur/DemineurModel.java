@@ -165,9 +165,10 @@ public final class DemineurModel {
         cells = new Cell[HEIGHT][WIDTH];
         countDiscoveredCells = 0;
         int n = 0;
+        Random r = new Random();
         while(n < MINES) {
-            int newMineI = new Random().nextInt(HEIGHT);
-            int newMineJ = new Random().nextInt(WIDTH);
+            int newMineI = r.nextInt(HEIGHT);
+            int newMineJ = r.nextInt(WIDTH);
             if((newMineI != i || newMineJ != j) && cells[newMineI][newMineJ] != Cell.MINE && isMineValidPosition(newMineI, newMineJ)) {
                 cells[newMineI][newMineJ] = Cell.MINE;
                 n++;

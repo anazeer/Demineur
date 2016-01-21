@@ -11,8 +11,19 @@
 
     <style name="WhiteText" parent="@android:style/TextAppearance">
         <item name="android:textColor">@color/white</item>
-        <item name="android:textSize">@dimen/textSize</item>
+        <item name="android:textSize">@dimen/whiteTextSize</item>
         <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TitleScoreText" parent="@android:style/TextAppearance">
+        <item name="android:textColor">@color/darkGrey</item>
+        <item name="android:textSize">@dimen/scoreTextSize</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="SettingsText" parent="@android:style/TextAppearance">
+        <item name="android:textColor">@color/darkGrey</item>
+        <item name="android:textSize">@dimen/scoreTextSize</item>
     </style>
 
 </resources>

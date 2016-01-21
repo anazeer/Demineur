@@ -7,4 +7,5 @@
     <color name="gameBackground">#3d4f59</color>
     <color name="flagPressed">#8a4c4c</color>
     <color name="white">#f4f4f4</color>
+    <color name="darkGrey">#393d49</color>
 </resources>

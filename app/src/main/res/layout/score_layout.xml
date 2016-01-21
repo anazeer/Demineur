@@ -6,85 +6,121 @@
     android:orientation="vertical"
     >
 
-    <TextView
-        android:text="@string/beginner"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/beginnerLayoutId"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        />
+        android:layout_marginTop="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_alignParentTop = "true"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/firstBeginnerScoreId"
-        android:text="@string/scoreLine"
-        android:layout_width="wrap_content"
+        <TextView
+            android:text="@string/beginner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TitleScoreText"
+            />
+
+        <TextView
+            android:id="@+id/firstBeginnerScoreId"
+            android:text="@string/scoreLine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+
+        <TextView
+            android:id="@+id/secondBeginnerScoreId"
+            android:text="@string/scoreLine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+
+        <TextView
+            android:id="@+id/thirdBeginnerScoreId"
+            android:text="@string/scoreLine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/intermediateLayoutId"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        />
+        android:layout_marginTop="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_below="@id/beginnerLayoutId"
+        android:orientation="vertical"
+        >
+        <TextView
+            android:text="@string/intermediate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TitleScoreText"
+            />
 
-    <TextView
-        android:id="@+id/secondBeginnerScoreId"
-        android:text="@string/scoreLine"
-        android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/firstIntermediateScoreId"
+            android:text="@string/scoreLine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+
+        <TextView
+            android:id="@+id/secondIntermediateScoreId"
+            android:text="@string/scoreLine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+
+        <TextView
+            android:id="@+id/thirdIntermediateScoreId"
+            android:text="@string/scoreLine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/minesSettingsId"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        />
+        android:layout_marginTop="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginBottom="12dp"
+        android:layout_below="@id/intermediateLayoutId"
+        android:orientation="vertical"
+        >
+        <TextView
+            android:text="@string/expert"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TitleScoreText"
+            />
 
-    <TextView
-        android:id="@+id/thirdBeginnerScoreId"
-        android:text="@string/scoreLine"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        />
+        <TextView
+            android:id="@+id/firstExpertScoreId"
+            android:text="@string/scoreLine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
 
-    <TextView
-        android:text="@string/intermediate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        />
+        <TextView
+            android:id="@+id/secondExpertScoreId"
+            android:text="@string/scoreLine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
 
-    <TextView
-        android:id="@+id/firstIntermediateScoreId"
-        android:text="@string/scoreLine"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        />
-
-    <TextView
-        android:id="@+id/secondIntermediateScoreId"
-        android:text="@string/scoreLine"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        />
-
-    <TextView
-        android:id="@+id/thirdIntermediateScoreId"
-        android:text="@string/scoreLine"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        />
-
-    <TextView
-        android:text="@string/expert"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        />
-
-    <TextView
-        android:id="@+id/firstExpertScoreId"
-        android:text="@string/scoreLine"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        />
-
-    <TextView
-        android:id="@+id/secondExpertScoreId"
-        android:text="@string/scoreLine"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        />
-
-    <TextView
-        android:id="@+id/thirdExpertScoreId"
-        android:text="@string/scoreLine"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        />
-
+        <TextView
+            android:id="@+id/thirdExpertScoreId"
+            android:text="@string/scoreLine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+    </LinearLayout>
 </LinearLayout>
