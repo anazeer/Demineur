@@ -131,10 +131,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if(model.isGameOver())
-            return;
-        initTimer();
         initMusic();
+        if(!model.isGameOver())
+            initTimer();
     }
 
     @Override
