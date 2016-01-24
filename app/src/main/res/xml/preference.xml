@@ -2,36 +2,48 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     >
 
-<PreferenceCategory
+    <PreferenceCategory
     android:title="@string/grid_preference"
     >
 
-    <ListPreference
-        android:key="gridSizePrefId"
-        android:title="@string/grid_size_pref_title"
-        android:summary="@string/grid_size_pref_summary"
-        android:entries="@array/grid_size_array"
-        android:entryValues="@array/grid_size_array"
-        android:dialogTitle="@string/grid_size_pref_title"
-        android:positiveButtonText="@string/accept"
-        android:negativeButtonText="@string/cancel"
-        android:defaultValue="@string/beginner"
-        />
+        <ListPreference
+            android:key="gridSizePrefId"
+            android:title="@string/grid_size_pref_title"
+            android:summary="@string/grid_size_pref_summary"
+            android:entries="@array/grid_size_array"
+            android:entryValues="@array/grid_size_array"
+            android:dialogTitle="@string/grid_size_pref_title"
+            android:positiveButtonText="@string/accept"
+            android:negativeButtonText="@string/cancel"
+            android:defaultValue="@string/beginner"
+            />
 
-    <CheckBoxPreference
-        android:key="animPrefId"
-        android:title="@string/anim_pref_title"
-        android:summary="@string/anim_pref_summary"
-        android:defaultValue="true"
-        />
+        <CheckBoxPreference
+            android:key="animPrefId"
+            android:title="@string/anim_pref_title"
+            android:summary="@string/anim_pref_summary"
+            android:defaultValue="true"
+            />
 
-    <CheckBoxPreference
-        android:key="vibrationPrefId"
-        android:title="@string/vibration_pref_title"
-        android:summary="@string/vibration_pref_summary"
-        android:defaultValue="true"
-        />
+        <CheckBoxPreference
+            android:key="vibrationPrefId"
+            android:title="@string/vibration_pref_title"
+            android:summary="@string/vibration_pref_summary"
+            android:defaultValue="true"
+            />
 
-</PreferenceCategory>
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/music"
+        >
+        <CheckBoxPreference
+            android:key="musicPrefId"
+            android:title="@string/music_pref_title"
+            android:summary="@string/music_pref_summary"
+            android:defaultValue="false"
+            />
+
+    </PreferenceCategory>
 
 </PreferenceScreen>
