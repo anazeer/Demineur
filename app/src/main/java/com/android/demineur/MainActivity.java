@@ -65,7 +65,6 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Settings operation
      */
-    private SharedPreferences preferences;
     private Dialog settingsDialog;
     private SeekBar widthSeekBar;
     private SeekBar heightSeekBar;
@@ -96,6 +95,21 @@ public class MainActivity extends AppCompatActivity {
     private Button pauseButton;
     private Button stopButton;
 
+    /**
+     * Preferences operations
+     */
+    private SharedPreferences preferences;
+    public final static String prefMusic = "musicPrefId";
+    public final static String prefMusicPaused = "musicPaused";
+    public final static String prefMusicTitle = "lastMusicTitle";
+    public final static String prefMusicLength = "musicLength";
+    public final static String prefModel = "model";
+    public final static String prefScoreBeginner = "beginnerScore";
+    public final static String prefScoreIntermediate = "intermediateScore";
+    public final static String prefScoreExpert = "expertScore";
+    public final static String prefGridSize = "gridSizePrefId";
+    public final static String prefAnimation = "animPrefId";
+    public final static String prefVibration = "vibrationPrefId";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,12 +146,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         initMusic();
-        Log.d("Preference ", preferences.getBoolean("musicPrefId", false) + "");
-        Log.d("musicPaused ", preferences.getBoolean("musicPaused", false) + "");
-        if(preferences.getBoolean("musicPrefId", false) && preferences.getBoolean("musicPaused", false)) {
-            Log.d("Music", "Music loaded");
-            startMusic(preferences.getString("lastMusicTitle", ""), preferences.getInt("musicLength", 0));
-        }
+        if(preferences.getBoolean(prefMusic, false) && preferences.getBoolean(prefMusicPaused, false))
+            startMusic(preferences.getString(prefMusicTitle, ""), preferences.getInt(prefMusicLength, 0));
         if(!model.isGameOver())
             initTimer();
 
@@ -151,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
         Gson gson = new Gson();
         String json = gson.toJson(model);
         SharedPreferences.Editor preferencesEditor = preferences.edit();
-        preferencesEditor.putString("model", json);
+        preferencesEditor.putString(prefModel, json);
         preferencesEditor.apply();
     }
 
@@ -216,17 +226,17 @@ public class MainActivity extends AppCompatActivity {
                 scoreTextViews[0] = (TextView) scoreLayout.findViewById(R.id.firstBeginnerScoreId);
                 scoreTextViews[1] = (TextView) scoreLayout.findViewById(R.id.secondBeginnerScoreId);
                 scoreTextViews[2] = (TextView) scoreLayout.findViewById(R.id.thirdBeginnerScoreId);
-                updateModeScore("beginnerScore", scoreTextViews);
+                updateModeScore(prefScoreBeginner, scoreTextViews);
                 scoreTextViews = new TextView[3];
                 scoreTextViews[0] = (TextView) scoreLayout.findViewById(R.id.firstIntermediateScoreId);
                 scoreTextViews[1] = (TextView) scoreLayout.findViewById(R.id.secondIntermediateScoreId);
                 scoreTextViews[2] = (TextView) scoreLayout.findViewById(R.id.thirdIntermediateScoreId);
-                updateModeScore("intermediateScore", scoreTextViews);
+                updateModeScore(prefScoreIntermediate, scoreTextViews);
                 scoreTextViews = new TextView[3];
                 scoreTextViews[0] = (TextView) scoreLayout.findViewById(R.id.firstExpertScoreId);
                 scoreTextViews[1] = (TextView) scoreLayout.findViewById(R.id.secondExpertScoreId);
                 scoreTextViews[2] = (TextView) scoreLayout.findViewById(R.id.thirdExpertScoreId);
-                updateModeScore("expertScore", scoreTextViews);
+                updateModeScore(prefScoreExpert, scoreTextViews);
             }
         });
     }
@@ -388,7 +398,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void startMusic(String filename, int time) {
         try {
-            preferences.edit().putString("lastMusicTitle", filename).apply();
+            preferences.edit().putString(prefMusicTitle, filename).apply();
             mediaPlayer.reset();
             mediaPlayer.setDataSource(filename);
             mediaPlayer.prepare();
@@ -401,7 +411,7 @@ public class MainActivity extends AppCompatActivity {
             MenuItem musicItem = menu.findItem(R.id.musicMenuId);
             musicItem.setIcon(R.drawable.musique_bleu);
         } catch(Exception e) {
-            Log.e("MainActivity", "MediaPlayer exception", e);
+            Log.e("MainActivity", "StartMusic exception", e);
             resumeButton.setEnabled(false);
             pauseButton.setEnabled(false);
             stopButton.setEnabled(false);
@@ -414,13 +424,11 @@ public class MainActivity extends AppCompatActivity {
     private void stopMusic() {
         SharedPreferences.Editor edit = preferences.edit();
         if(mediaPlayer.isPlaying()) {
-            edit.putBoolean("musicPaused", true);
-            edit.putInt("musicLength", mediaPlayer.getCurrentPosition());
-            Log.d("Music", "Music saved");
+            edit.putBoolean(prefMusicPaused, true);
+            edit.putInt(prefMusicLength, mediaPlayer.getCurrentPosition());
         }
         else {
-            Log.wtf("Wtf", "On met a false lol");
-            edit.putBoolean("musicPaused", false);
+            edit.putBoolean(prefMusicPaused, false);
         }
         edit.apply();
         if(mediaPlayer != null) {
@@ -438,7 +446,7 @@ public class MainActivity extends AppCompatActivity {
         model = (DemineurModel) getLastCustomNonConfigurationInstance();
         if(model == null) {
             Gson gson = new Gson();
-            String json = preferences.getString("model", "");
+            String json = preferences.getString(prefModel, "");
             model = gson.fromJson(json, DemineurModel.class);
             if(model != null && model.isGameOver()) // Begin a new game if the old one is done or hasn't started
                 model = null;
@@ -447,7 +455,7 @@ public class MainActivity extends AppCompatActivity {
             restartGame();
         else {
             String[] gridSizes = getResources().getStringArray(R.array.grid_size_array);
-            String pref = preferences.getString("gridSizePrefId", gridSizes[0]);
+            String pref = preferences.getString(prefGridSize, gridSizes[0]);
             if (pref.equals(gridSizes[0]))
                 newGame(9, 9, 10);
             else if (pref.equals(gridSizes[1]))
@@ -464,7 +472,7 @@ public class MainActivity extends AppCompatActivity {
         stopTimer();
         model = new DemineurModel(width, height, mines);
         initGrid();
-        if(preferences.getBoolean("animPrefId", true)) {
+        if(preferences.getBoolean(prefAnimation, true)) {
             animation = AnimationUtils.loadAnimation(this, R.anim.move);
             gridLayout.startAnimation(animation);
         }
@@ -502,11 +510,11 @@ public class MainActivity extends AppCompatActivity {
      * Play the lose animation
      */
     private void lose() {
-        if(preferences.getBoolean("animPrefId", true)) {
+        if(preferences.getBoolean(prefAnimation, true)) {
             animation = AnimationUtils.loadAnimation(this, R.anim.explosion);
             gridLayout.startAnimation(animation);
         }
-        if(preferences.getBoolean("vibrationPrefId", true)) {
+        if(preferences.getBoolean(prefVibration, true)) {
             Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
             vibrator.vibrate(500);
         }
@@ -515,13 +523,13 @@ public class MainActivity extends AppCompatActivity {
     private void updateScore() {
         String key = null;
         if(model.getWidth() == 9 && model.getHeight() == 9 && model.getMines() == 10) {
-            key = "beginnerScore";
+            key = prefScoreBeginner;
         }
         else if(model.getWidth() == 16 && model.getHeight() == 16 && model.getMines() == 40) {
-            key = "intermediateScore";
+            key = prefScoreIntermediate;
         }
         else if(model.getWidth() == 30 && model.getHeight() == 16 && model.getMines() == 99) {
-            key = "expertScore";
+            key = prefScoreExpert;
         }
         if(key == null)
             return;
@@ -748,7 +756,7 @@ public class MainActivity extends AppCompatActivity {
             model.setFlagMode(true);
             v.performClick();
             model.setFlagMode(flag);
-            if(preferences.getBoolean("vibrationPrefId", true)) {
+            if(preferences.getBoolean(prefVibration, true)) {
                 Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                 vibrator.vibrate(50);
             }
