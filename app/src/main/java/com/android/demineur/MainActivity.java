@@ -132,8 +132,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         initMusic();
+        Log.d("Preference ", preferences.getBoolean("musicPrefId", false) + "");
+        Log.d("musicPaused ", preferences.getBoolean("musicPaused", false) + "");
+        if(preferences.getBoolean("musicPrefId", false) && preferences.getBoolean("musicPaused", false)) {
+            Log.d("Music", "Music loaded");
+            startMusic(preferences.getString("lastMusicTitle", ""), preferences.getInt("musicLength", 0));
+        }
         if(!model.isGameOver())
             initTimer();
+
     }
 
     @Override
@@ -141,7 +148,6 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
         model.setPause(true);
         stopTimer();
-        stopMusic();
         Gson gson = new Gson();
         String json = gson.toJson(model);
         SharedPreferences.Editor preferencesEditor = preferences.edit();
@@ -286,10 +292,27 @@ public class MainActivity extends AppCompatActivity {
                 musicItem.setIcon(R.drawable.musique);
             }
         });
+        musicDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                if (mediaPlayer.isPlaying()) { // The media is playing
+                    pauseButton.setEnabled(true);
+                    stopButton.setEnabled(true);
+                    resumeButton.setEnabled(false);
+                } else if (resumeButton.isEnabled()) { // The media is paused
+                    resumeButton.setEnabled(true);
+                    pauseButton.setEnabled(false);
+                    stopButton.setEnabled(true);
+                } else { // The media is stopped
+                    resumeButton.setEnabled(false);
+                    pauseButton.setEnabled(false);
+                    stopButton.setEnabled(false);
+                }
+            }
+        });
         resumeButton.setEnabled(false);
         pauseButton.setEnabled(false);
         stopButton.setEnabled(false);
-
     }
 
     /**
@@ -361,10 +384,46 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * Start the given music
+     */
+    private void startMusic(String filename, int time) {
+        try {
+            preferences.edit().putString("lastMusicTitle", filename).apply();
+            mediaPlayer.reset();
+            mediaPlayer.setDataSource(filename);
+            mediaPlayer.prepare();
+            mediaPlayer.seekTo(time);
+            mediaPlayer.start();
+            musicDialog.dismiss();
+            resumeButton.setEnabled(false);
+            pauseButton.setEnabled(true);
+            stopButton.setEnabled(true);
+            MenuItem musicItem = menu.findItem(R.id.musicMenuId);
+            musicItem.setIcon(R.drawable.musique_bleu);
+        } catch(Exception e) {
+            Log.e("MainActivity", "MediaPlayer exception", e);
+            resumeButton.setEnabled(false);
+            pauseButton.setEnabled(false);
+            stopButton.setEnabled(false);
+        }
+    }
+
+    /**
      * Stop music service before exiting the application
      */
     private void stopMusic() {
-        if (mediaPlayer != null) {
+        SharedPreferences.Editor edit = preferences.edit();
+        if(mediaPlayer.isPlaying()) {
+            edit.putBoolean("musicPaused", true);
+            edit.putInt("musicLength", mediaPlayer.getCurrentPosition());
+            Log.d("Music", "Music saved");
+        }
+        else {
+            Log.wtf("Wtf", "On met a false lol");
+            edit.putBoolean("musicPaused", false);
+        }
+        edit.apply();
+        if(mediaPlayer != null) {
             mediaPlayer.release();
             MenuItem musicItem = menu.findItem(R.id.musicMenuId);
             musicItem.setIcon(R.drawable.musique);
@@ -656,20 +715,7 @@ public class MainActivity extends AppCompatActivity {
             int musicIndex = musicCursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA);
             musicCursor.moveToPosition(position);
             String filename = musicCursor.getString(musicIndex);
-            try {
-                mediaPlayer.reset();
-                mediaPlayer.setDataSource(filename);
-                mediaPlayer.prepare();
-                mediaPlayer.start();
-                musicDialog.dismiss();
-                resumeButton.setEnabled(false);
-                pauseButton.setEnabled(true);
-                stopButton.setEnabled(true);
-                MenuItem musicItem = menu.findItem(R.id.musicMenuId);
-                musicItem.setIcon(R.drawable.musique_bleu);
-            } catch(Exception e) {
-                Log.e("MainActivity", "MediaPlayer exception", e);
-            }
+            startMusic(filename, 0);
         }
     };
 

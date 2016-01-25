@@ -49,6 +49,8 @@
     <string name="resumeMusic">Resume</string>
     <string name="pauseMusic">Pause</string>
     <string name="stopMusic">Stop</string>
+    <string name="music_pref_title">Resume music</string>
+    <string name="music_pref_summary">Automatically resume last music</string>
 
     <string name="score">Score</string>
     <string name="scoreLine">%1$d. %2$s</string>
