@@ -8,8 +8,8 @@
     <ScrollView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
         android:layout_centerInParent="true"
+        android:fillViewport="true"
         >
 
     <LinearLayout
@@ -53,7 +53,7 @@
             android:id="@+id/detailImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/aideDetails"
+            android:src="@drawable/aide_details"
             android:layout_marginTop="6dp"
             android:scaleType="centerInside"
             android:adjustViewBounds="true"/>
@@ -63,7 +63,7 @@
             android:text="@string/helpGameTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="12dp"
             android:layout_marginLeft="12dp"
             android:textAppearance="@style/TitleScoreText"
             />

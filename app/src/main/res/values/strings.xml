@@ -63,20 +63,19 @@
     <string name="helpRule">"The aim of the game is to reveal all the cells that are not mines, as quickly as possible. If you reveal a mine, you lose the game."</string>
     <string name="helpGameTitle">1) New game</string>
     <string name="helpGame">"You can choose the grid configuration you want to play. To do so, open the New game menu after clicking on the + button. The beginner mode is the default configuration.
-        The random choice will automatically generate a grid for you ! The custom choice will let you set your desired configuration. Note that these two last mode result will not appear in the score screen.
-        "</string>
+        The random choice will automatically generate a grid for you ! The custom choice will let you set your desired configuration. Note that these two last mode result will not appear in the score screen."</string>
     <string name="helpPlayTitle">2) Start game (timer)</string>
     <string name="helpPlay">"You can start the game by several ways. You can click on a random cell, put a flag (see flag section), or use a joker (see joker section).
         Any of these action will start the timer."</string>
     <string name="helpReplayTitle">3) Restart game</string>
     <string name="helpReplay">"If you want to restart the game with the same settings, you can click on the restart button. That action can be done whenever you want, especially after losing the game."</string>
     <string name="helpFlagTitle">4) Flag mode</string>
-    <string name="helpFlag">"If you suspect a cell to be a mine, you can mark it by putting a flag. To do so, you have two different ways :\n
+    <string name="helpFlag">"If you suspect a cell to be a mine, you can mark it by putting a flag. To do so, you have two different ways :
         \t- By clicking on the flag button. If the flag button is red, then you're already in the flag mode.
         \t- By doing a long press action on a cell. A short vibration will warm you that the action has been done, if you didn't disable vibration in the settings menu."
     </string>
     <string name="helpJokerTitle">5) Joker mode</string>
-    <string name="helpJoker">"You can use jokers to help yourself!\nTo access them, click on the star in the toolbar menu.\nThere are two jokers : \n
+    <string name="helpJoker">"You can use jokers to help yourself!\nTo access them, click on the star in the toolbar menu.\nThere are two jokers :
         \t- Safe mode : your next will be safe. If you click on a mine, it will put a flg instead of exploding it !
         \t- Burst mode : it's a powerful move that will reveal all the adjacent cells of where you play ! A flag is put if any of these cells was a mine.
         When you activate a joker, the star will become yellow. If you click ont the flag button, it will cancel the joker and you can reactivate it later.

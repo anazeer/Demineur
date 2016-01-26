@@ -86,6 +86,11 @@ public class MainActivity extends AppCompatActivity {
     private Dialog scoreDialog;
 
     /**
+     * Help operations
+     */
+    private Dialog helpDialog;
+
+    /**
      * Music operations
      */
     private MediaPlayer mediaPlayer;
@@ -131,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
         initModel();
         initSettingsDialog();
         initScoreDialog();
+        initHelpDialog();
         initMusicDialog();
     }
 
@@ -239,6 +245,17 @@ public class MainActivity extends AppCompatActivity {
                 updateModeScore(prefScoreExpert, scoreTextViews);
             }
         });
+    }
+
+    /**
+     * Initialize the help dialog interface
+     */
+    private void initHelpDialog() {
+        helpDialog = new Dialog(this);
+        helpDialog.setTitle(getResources().getString(R.string.help));
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
+        final View helpLayout = inflater.inflate(R.layout.help_layout, (ViewGroup) findViewById(R.id.helpLayoutId)); // We need to inflate the layout in order to access its elements
+        helpDialog.setContentView(helpLayout);
     }
 
     /**
@@ -624,6 +641,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.scoreMenuId:
                 scoreDialog.show();
+                break;
+            case R.id.helpMenuId:
+                helpDialog.show();
                 break;
             case R.id.musicMenuId:
                 musicDialog.show();
