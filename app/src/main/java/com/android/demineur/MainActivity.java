@@ -584,7 +584,7 @@ public class MainActivity extends AppCompatActivity {
         Set<String> scores = preferences.getStringSet(key, null);
         if(scores == null)
             for(int i = 0; i < 3; i++)
-                scoreTextViews[i].setText(getResources().getString(R.string.scoreLine, (i+1), getResources().getString(R.string.noScore)));
+                scoreTextViews[i].setText(getResources().getString(R.string.scoreLine, getResources().getString(R.string.noScore)));
         else {
             TreeSet<String> orderedScore = new TreeSet<>(new Comparator<String>(){
                 public int compare(String a, String b){
@@ -595,11 +595,11 @@ public class MainActivity extends AppCompatActivity {
             int i = 0;
             for(String score : orderedScore) {
                 int intScore = Integer.parseInt(score);
-                scoreTextViews[i].setText(getResources().getString(R.string.scoreLine, (i+1), getResources().getString(R.string.timer, intScore/60, intScore%60)));
+                scoreTextViews[i].setText(getResources().getString(R.string.scoreLine, getResources().getString(R.string.timer, intScore/60, intScore%60)));
                 i++;
             }
             for(; i < 3; i++) {
-                scoreTextViews[i].setText(getResources().getString(R.string.scoreLine, (i+1),getResources().getString(R.string.noScore)));
+                scoreTextViews[i].setText(getResources().getString(R.string.scoreLine, getResources().getString(R.string.noScore)));
             }
         }
     }

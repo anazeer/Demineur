@@ -53,8 +53,12 @@
     <string name="music_pref_summary">Automatically resume last music</string>
 
     <string name="score">Score</string>
-    <string name="scoreLine">%1$d. %2$s</string>
-    <string name="noScore">No best score yet</string>
+    <string name="scoreLine">%1$s</string>
+    <string name="noScore">"  No best score yet"</string>
+    <string name="total">Total</string>
+    <string name="scoreTotalLine">Games played : %1$d</string>
+    <string name="scoreWinLine">Games won : %1$d</string>
+    <string name="scorePercentageLine">Win percentage : %1$d</string>
 
     <string name="flagDesc">Activate/deactivate the flag mode</string>
 

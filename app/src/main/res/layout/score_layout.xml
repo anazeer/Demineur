@@ -18,6 +18,7 @@
 
         <TextView
             android:text="@string/beginner"
+            android:layout_marginLeft="32dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TitleScoreText"
@@ -28,6 +29,9 @@
             android:text="@string/scoreLine"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:drawableStart="@drawable/bombe1"
+            android:drawableLeft="@drawable/bombe1"
             />
 
         <TextView
@@ -35,6 +39,9 @@
             android:text="@string/scoreLine"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:drawableStart="@drawable/bombe2"
+            android:drawableLeft="@drawable/bombe2"
             />
 
         <TextView
@@ -42,6 +49,9 @@
             android:text="@string/scoreLine"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:drawableStart="@drawable/bombe3"
+            android:drawableLeft="@drawable/bombe3"
             />
     </LinearLayout>
 
@@ -52,13 +62,13 @@
         android:layout_marginTop="12dp"
         android:layout_marginRight="12dp"
         android:layout_marginLeft="12dp"
-        android:layout_below="@id/beginnerLayoutId"
         android:orientation="vertical"
         >
         <TextView
             android:text="@string/intermediate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="32dp"
             android:textAppearance="@style/TitleScoreText"
             />
 
@@ -67,6 +77,9 @@
             android:text="@string/scoreLine"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:drawableStart="@drawable/bombe1"
+            android:drawableLeft="@drawable/bombe1"
             />
 
         <TextView
@@ -74,6 +87,9 @@
             android:text="@string/scoreLine"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:drawableStart="@drawable/bombe2"
+            android:drawableLeft="@drawable/bombe2"
             />
 
         <TextView
@@ -81,24 +97,27 @@
             android:text="@string/scoreLine"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:drawableStart="@drawable/bombe3"
+            android:drawableLeft="@drawable/bombe3"
             />
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/minesSettingsId"
+        android:id="@+id/expertLayoutId"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:layout_marginRight="12dp"
         android:layout_marginLeft="12dp"
-        android:layout_marginBottom="12dp"
-        android:layout_below="@id/intermediateLayoutId"
+        android:gravity="center_vertical"
         android:orientation="vertical"
         >
         <TextView
             android:text="@string/expert"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="32dp"
             android:textAppearance="@style/TitleScoreText"
             />
 
@@ -107,6 +126,9 @@
             android:text="@string/scoreLine"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:drawableStart="@drawable/bombe1"
+            android:drawableLeft="@drawable/bombe1"
             />
 
         <TextView
@@ -114,6 +136,9 @@
             android:text="@string/scoreLine"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:drawableStart="@drawable/bombe2"
+            android:drawableLeft="@drawable/bombe2"
             />
 
         <TextView
@@ -121,6 +146,54 @@
             android:text="@string/scoreLine"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:drawableStart="@drawable/bombe3"
+            android:drawableLeft="@drawable/bombe3"
             />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/totalLayoutId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginBottom="24dp"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        >
+
+        <TextView
+            android:text="@string/total"
+            android:layout_marginTop="12dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="32dp"
+            android:textAppearance="@style/TitleScoreText"
+            />
+
+        <TextView
+            android:id="@+id/totalScoreId"
+            android:text="@string/scoreTotalLine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            />
+        <TextView
+            android:id="@+id/winScoreId"
+            android:text="@string/scoreWinLine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            />
+        <TextView
+            android:id="@+id/percentageScoreId"
+            android:text="@string/scorePercentageLine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            />
+
     </LinearLayout>
 </LinearLayout>
