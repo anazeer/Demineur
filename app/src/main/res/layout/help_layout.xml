@@ -176,6 +176,20 @@
             android:layout_height="wrap_content"
             android:textAppearance="@style/SettingsText"
             />
+
+        <TextView
+            android:text="@string/glhf"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:textAppearance="@style/TitleScoreText"
+            />
+
+        <TextView
+            android:text=""
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
     </LinearLayout>
 
     </ScrollView>

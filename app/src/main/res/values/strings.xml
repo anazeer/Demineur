@@ -86,5 +86,6 @@
         Note that we don't show how many game you lost, because we don't want to discourage you :)"</string>
     <string name="helpMusicTitle">7) Play music</string>
     <string name="helpMusic">"Playing minesweeper becomes boring ? Play with your favorite song ! To choose a song in your device, open the Music menu after clicking on the + button."</string>
+    <string name="glhf">Good luck, have fun !</string>
 
 </resources>
