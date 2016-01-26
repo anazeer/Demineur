@@ -26,7 +26,6 @@
 
         <TextView
             android:id="@+id/firstBeginnerScoreId"
-            android:text="@string/scoreLine"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
@@ -36,7 +35,6 @@
 
         <TextView
             android:id="@+id/secondBeginnerScoreId"
-            android:text="@string/scoreLine"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
@@ -46,7 +44,6 @@
 
         <TextView
             android:id="@+id/thirdBeginnerScoreId"
-            android:text="@string/scoreLine"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
@@ -74,7 +71,6 @@
 
         <TextView
             android:id="@+id/firstIntermediateScoreId"
-            android:text="@string/scoreLine"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
@@ -84,7 +80,6 @@
 
         <TextView
             android:id="@+id/secondIntermediateScoreId"
-            android:text="@string/scoreLine"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
@@ -94,7 +89,6 @@
 
         <TextView
             android:id="@+id/thirdIntermediateScoreId"
-            android:text="@string/scoreLine"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
@@ -123,7 +117,6 @@
 
         <TextView
             android:id="@+id/firstExpertScoreId"
-            android:text="@string/scoreLine"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
@@ -133,7 +126,6 @@
 
         <TextView
             android:id="@+id/secondExpertScoreId"
-            android:text="@string/scoreLine"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
@@ -143,7 +135,6 @@
 
         <TextView
             android:id="@+id/thirdExpertScoreId"
-            android:text="@string/scoreLine"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"

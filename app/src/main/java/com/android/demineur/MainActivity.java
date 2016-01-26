@@ -115,12 +115,14 @@ public class MainActivity extends AppCompatActivity {
     public final static String prefGridSize = "gridSizePrefId";
     public final static String prefAnimation = "animPrefId";
     public final static String prefVibration = "vibrationPrefId";
+    public final static String prefGameTotal = "gameTotal";
+    public final static String prefGameWin = "gameWin";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         assert getSupportActionBar() != null; // Prevent from the possible NullPointerException warning
-        getSupportActionBar().setDisplayShowTitleEnabled(false); // Unshow game titlz in menu
+        getSupportActionBar().setDisplayShowTitleEnabled(false); // Unshow game title in menu
         setContentView(R.layout.grid_layout);
         gridLayout = (GridLayout) findViewById(R.id.gridId);
         flagButton = (ImageButton) findViewById(R.id.flagButtonId);
@@ -243,6 +245,15 @@ public class MainActivity extends AppCompatActivity {
                 scoreTextViews[1] = (TextView) scoreLayout.findViewById(R.id.secondExpertScoreId);
                 scoreTextViews[2] = (TextView) scoreLayout.findViewById(R.id.thirdExpertScoreId);
                 updateModeScore(prefScoreExpert, scoreTextViews);
+                TextView totalScoreTextView = (TextView) scoreLayout.findViewById(R.id.totalScoreId);
+                TextView winScoreTextView = (TextView) scoreLayout.findViewById(R.id.winScoreId);
+                TextView winPercentageScoreTextView = (TextView) scoreLayout.findViewById(R.id.percentageScoreId);
+                int totalGameCount = preferences.getInt(prefGameTotal, 0);
+                int winGameCount = preferences.getInt(prefGameWin, 0);
+                double winPercentage = totalGameCount == 0 ? 0 : (double) winGameCount * 100 / (double) totalGameCount;
+                totalScoreTextView.setText(getResources().getString(R.string.scoreTotalLine, totalGameCount));
+                winScoreTextView.setText(getResources().getString(R.string.scoreWinLine, winGameCount));
+                winPercentageScoreTextView.setText(getResources().getString(R.string.scorePercentageLine, winPercentage));
             }
         });
     }
@@ -425,8 +436,8 @@ public class MainActivity extends AppCompatActivity {
             resumeButton.setEnabled(false);
             pauseButton.setEnabled(true);
             stopButton.setEnabled(true);
-            MenuItem musicItem = menu.findItem(R.id.musicMenuId);
-            musicItem.setIcon(R.drawable.musique_bleu);
+            if(menu != null)
+                updateMusicButton();
         } catch(Exception e) {
             Log.e("MainActivity", "StartMusic exception", e);
             resumeButton.setEnabled(false);
@@ -520,6 +531,10 @@ public class MainActivity extends AppCompatActivity {
         String result = model.isWon() ? getResources().getString(R.string.won) : getResources().getString(R.string.lost);
         Toast.makeText(MainActivity.this, getResources().getString(R.string.result, result), Toast.LENGTH_SHORT).show();
         replayDialog.setTitle(getResources().getString(R.string.result, result));
+        SharedPreferences.Editor edit = preferences.edit();
+        edit.putInt(prefGameWin, preferences.getInt(prefGameWin, 0) + 1);
+        edit.putInt(prefGameTotal, preferences.getInt(prefGameTotal, 0) + 1);
+        edit.apply();
         replayDialog.show();
     }
 
@@ -535,6 +550,7 @@ public class MainActivity extends AppCompatActivity {
             Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
             vibrator.vibrate(500);
         }
+        preferences.edit().putInt(prefGameTotal, preferences.getInt(prefGameTotal, 0) + 1).apply();
     }
 
     private void updateScore() {
@@ -584,7 +600,7 @@ public class MainActivity extends AppCompatActivity {
         Set<String> scores = preferences.getStringSet(key, null);
         if(scores == null)
             for(int i = 0; i < 3; i++)
-                scoreTextViews[i].setText(getResources().getString(R.string.scoreLine, getResources().getString(R.string.noScore)));
+                scoreTextViews[i].setText(getResources().getString(R.string.noScore));
         else {
             TreeSet<String> orderedScore = new TreeSet<>(new Comparator<String>(){
                 public int compare(String a, String b){
@@ -595,11 +611,11 @@ public class MainActivity extends AppCompatActivity {
             int i = 0;
             for(String score : orderedScore) {
                 int intScore = Integer.parseInt(score);
-                scoreTextViews[i].setText(getResources().getString(R.string.scoreLine, getResources().getString(R.string.timer, intScore/60, intScore%60)));
+                scoreTextViews[i].setText(getResources().getString(R.string.timer, intScore / 60, intScore % 60));
                 i++;
             }
             for(; i < 3; i++) {
-                scoreTextViews[i].setText(getResources().getString(R.string.scoreLine, getResources().getString(R.string.noScore)));
+                scoreTextViews[i].setText(getResources().getString(R.string.noScore));
             }
         }
     }
@@ -611,6 +627,7 @@ public class MainActivity extends AppCompatActivity {
         menuInflater.inflate(R.menu.menu, menu);
         this.menu = menu;
         updateJokerButton();
+        updateMusicButton();
         return true;
     }
 
@@ -647,6 +664,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.musicMenuId:
                 musicDialog.show();
+                updateMusicButton();
                 break;
             case R.id.safeJokerMenuId:
                 model.activateSafeModeJoker();
@@ -827,6 +845,17 @@ public class MainActivity extends AppCompatActivity {
             burstJokerItem.setIcon(null);
             burstJokerItem.setEnabled(true);
         }
+    }
+
+    /**
+     * Update the music menu button
+     */
+    private void updateMusicButton() {
+        MenuItem musicItem = menu.findItem(R.id.musicMenuId);
+        if(mediaPlayer.isPlaying())
+            musicItem.setIcon(R.drawable.musique_bleu);
+        else
+            musicItem.setIcon(R.drawable.musique);
     }
 
     /**

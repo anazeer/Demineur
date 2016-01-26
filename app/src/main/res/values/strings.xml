@@ -53,12 +53,11 @@
     <string name="music_pref_summary">Automatically resume last music</string>
 
     <string name="score">Score</string>
-    <string name="scoreLine">%1$s</string>
     <string name="noScore">"  No best score yet"</string>
     <string name="total">Total</string>
-    <string name="scoreTotalLine">Games played : %1$d</string>
-    <string name="scoreWinLine">Games won : %1$d</string>
-    <string name="scorePercentageLine">Win percentage : %1$d</string>
+    <string name="scoreTotalLine">Games played : %d</string>
+    <string name="scoreWinLine">Games won : %d</string>
+    <string name="scorePercentageLine">Win percentage : %.2f%%</string>
 
     <string name="flagDesc">Activate/deactivate the flag mode</string>
 
@@ -75,13 +74,13 @@
     <string name="helpReplay">"If you want to restart the game with the same settings, you can click on the restart button. That action can be done whenever you want, especially after losing the game."</string>
     <string name="helpFlagTitle">4) Flag mode</string>
     <string name="helpFlag">"If you suspect a cell to be a mine, you can mark it by putting a flag. To do so, you have two different ways :
-        \t- By clicking on the flag button. If the flag button is red, then you're already in the flag mode.
-        \t- By doing a long press action on a cell. A short vibration will warm you that the action has been done, if you didn't disable vibration in the settings menu."
+        - By clicking on the flag button. If the flag button is red, then you're already in the flag mode.
+        - By doing a long press action on a cell. A short vibration will warm you that the action has been done, if you didn't disable vibration in the settings menu."
     </string>
     <string name="helpJokerTitle">5) Joker mode</string>
     <string name="helpJoker">"You can use jokers to help yourself!\nTo access them, click on the star in the toolbar menu.\nThere are two jokers :
-        \t- Safe mode : your next will be safe. If you click on a mine, it will put a flg instead of exploding it !
-        \t- Burst mode : it's a powerful move that will reveal all the adjacent cells of where you play ! A flag is put if any of these cells was a mine.
+          - Safe mode : your next will be safe. If you click on a mine, it will put a flg instead of exploding it !
+          - Burst mode : it's a powerful move that will reveal all the adjacent cells of where you play ! A flag is put if any of these cells was a mine.
         When you activate a joker, the star will become yellow. If you click ont the flag button, it will cancel the joker and you can reactivate it later.
         You can use a joker only once, so think twice before using it !"
     </string>
