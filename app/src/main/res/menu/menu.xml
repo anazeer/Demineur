@@ -73,6 +73,10 @@
                 android:id="@+id/settingsMenuId"
                 android:title="@string/settings"
                 />
+            <item
+                android:id="@+id/helpMenuId"
+                android:title="@string/help"
+                />
         </menu>
     </item>
 

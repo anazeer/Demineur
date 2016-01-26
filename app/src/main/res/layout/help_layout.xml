@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/helpLayoutId"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_centerInParent="true"
+        >
+
+    <LinearLayout
+        android:id="@+id/beginnerLayoutId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_alignParentTop = "true"
+        android:orientation="vertical"
+        >
+
+        <!-- Rule -->
+        <TextView
+            android:text="@string/helpRuleTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="12dp"
+            android:textAppearance="@style/TitleScoreText"
+            />
+
+        <ImageView
+            android:id="@+id/ruleImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/rule"
+            android:layout_gravity="center"
+            android:layout_marginTop="6dp"/>
+
+        <TextView
+            android:layout_marginTop="6dp"
+            android:text="@string/helpRule"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/SettingsText"
+            />
+
+
+        <ImageView
+            android:id="@+id/detailImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/aideDetails"
+            android:layout_marginTop="6dp"
+            android:scaleType="centerInside"
+            android:adjustViewBounds="true"/>
+
+        <!-- New Game -->
+        <TextView
+            android:text="@string/helpGameTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:layout_marginLeft="12dp"
+            android:textAppearance="@style/TitleScoreText"
+            />
+
+        <TextView
+            android:text="@string/helpGame"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/SettingsText"
+            />
+
+        <!-- Start Game -->
+        <TextView
+            android:text="@string/helpPlayTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:layout_marginLeft="12dp"
+            android:textAppearance="@style/TitleScoreText"
+            />
+
+        <TextView
+            android:text="@string/helpPlay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/SettingsText"
+            />
+
+        <!-- Restart Game -->
+        <TextView
+            android:text="@string/helpReplayTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:layout_marginLeft="12dp"
+            android:textAppearance="@style/TitleScoreText"
+            />
+
+        <TextView
+            android:text="@string/helpReplay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/SettingsText"
+            />
+
+        <!-- Flag mode -->
+        <TextView
+            android:text="@string/helpFlagTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:layout_marginLeft="12dp"
+            android:textAppearance="@style/TitleScoreText"
+            />
+
+        <TextView
+            android:text="@string/helpFlag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/SettingsText"
+            />
+
+        <!-- Joker mode -->
+        <TextView
+            android:text="@string/helpJokerTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:layout_marginLeft="12dp"
+            android:textAppearance="@style/TitleScoreText"
+            />
+
+        <TextView
+            android:text="@string/helpJoker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/SettingsText"
+            />
+
+        <!-- Score menu -->
+        <TextView
+            android:text="@string/helpScoreTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:layout_marginLeft="12dp"
+            android:textAppearance="@style/TitleScoreText"
+            />
+
+        <TextView
+            android:text="@string/helpScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/SettingsText"
+            />
+
+        <!-- Play music -->
+        <TextView
+            android:text="@string/helpMusicTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:layout_marginLeft="12dp"
+            android:textAppearance="@style/TitleScoreText"
+            />
+
+        <TextView
+            android:text="@string/helpMusic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/SettingsText"
+            />
+    </LinearLayout>
+
+    </ScrollView>
+</LinearLayout>
