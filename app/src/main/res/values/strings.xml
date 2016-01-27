@@ -60,6 +60,7 @@
     <string name="scorePercentageLine">Win percentage : %.2f%%</string>
 
     <string name="flagDesc">Activate/deactivate the flag mode</string>
+    <string name="gameDesc">Game interface</string>
 
     <string name="help">Help</string>
     <string name="helpRuleTitle">Main rule</string>

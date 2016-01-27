@@ -1,16 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/helpLayoutId"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <ScrollView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:fillViewport="true"
-        >
+    android:layout_height="match_parent"
+    >
 
     <LinearLayout
         android:id="@+id/beginnerLayoutId"
@@ -19,7 +13,6 @@
         android:layout_marginTop="12dp"
         android:layout_marginRight="12dp"
         android:layout_marginLeft="12dp"
-        android:layout_alignParentTop = "true"
         android:orientation="vertical"
         >
 
@@ -34,15 +27,17 @@
 
         <ImageView
             android:id="@+id/ruleImage"
+            android:src="@drawable/rule"
+            android:contentDescription="@string/helpRuleTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/rule"
             android:layout_gravity="center"
-            android:layout_marginTop="6dp"/>
+            android:layout_marginTop="6dp"
+            />
 
         <TextView
-            android:layout_marginTop="6dp"
             android:text="@string/helpRule"
+            android:layout_marginTop="6dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="@style/SettingsText"
@@ -51,12 +46,14 @@
 
         <ImageView
             android:id="@+id/detailImage"
+            android:src="@drawable/aide_details"
+            android:contentDescription="@string/gameDesc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/aide_details"
             android:layout_marginTop="6dp"
             android:scaleType="centerInside"
-            android:adjustViewBounds="true"/>
+            android:adjustViewBounds="true"
+            />
 
         <!-- New Game -->
         <TextView
@@ -192,5 +189,4 @@
             />
     </LinearLayout>
 
-    </ScrollView>
-</LinearLayout>
+</ScrollView>

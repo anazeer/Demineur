@@ -158,7 +158,6 @@ public class MainActivity extends AppCompatActivity {
             startMusic(preferences.getString(prefMusicTitle, ""), preferences.getInt(prefMusicLength, 0));
         if(!model.isGameOver())
             initTimer();
-
     }
 
     @Override
@@ -464,7 +463,8 @@ public class MainActivity extends AppCompatActivity {
             MenuItem musicItem = menu.findItem(R.id.musicMenuId);
             musicItem.setIcon(R.drawable.musique);
         }
-        musicCursor.close();
+        if(musicCursor != null)
+            musicCursor.close();
     }
 
     /**
