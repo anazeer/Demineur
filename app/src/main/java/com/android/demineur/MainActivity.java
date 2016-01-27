@@ -435,8 +435,6 @@ public class MainActivity extends AppCompatActivity {
             resumeButton.setEnabled(false);
             pauseButton.setEnabled(true);
             stopButton.setEnabled(true);
-            if(menu != null)
-                updateMusicButton();
         } catch(Exception e) {
             Log.e("MainActivity", "StartMusic exception", e);
             resumeButton.setEnabled(false);
@@ -458,11 +456,8 @@ public class MainActivity extends AppCompatActivity {
             edit.putBoolean(prefMusicPaused, false);
         }
         edit.apply();
-        if(mediaPlayer != null) {
+        if(mediaPlayer != null)
             mediaPlayer.release();
-            MenuItem musicItem = menu.findItem(R.id.musicMenuId);
-            musicItem.setIcon(R.drawable.musique);
-        }
         if(musicCursor != null)
             musicCursor.close();
     }
@@ -627,8 +622,14 @@ public class MainActivity extends AppCompatActivity {
         menuInflater.inflate(R.menu.menu, menu);
         this.menu = menu;
         updateJokerButton();
-        updateMusicButton();
         return true;
+    }
+
+    @Override
+    public boolean onMenuOpened(int featureId, Menu menu) {
+        boolean bool = super.onMenuOpened(featureId, menu);
+        updateMusicButton();
+        return bool;
     }
 
     @Override
