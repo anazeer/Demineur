@@ -281,7 +281,7 @@ public class MainActivity extends AppCompatActivity {
         // Initialize the music list
         initMusic();
         List<String> list = new ArrayList<>();
-        while(musicCursor.moveToNext())
+        while(musicCursor != null && musicCursor.moveToNext())
             list.add(musicCursor.getString(musicCursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE)));
         ArrayAdapter<String> musicAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, list);
         ListView musicList = (ListView) musicLayout.findViewById(R.id.musicListId);
@@ -414,7 +414,6 @@ public class MainActivity extends AppCompatActivity {
                 MediaStore.Audio.Media.DATA,
                 MediaStore.Audio.Media.TITLE,
                 MediaStore.Audio.Media.DISPLAY_NAME,
-                MediaStore.Video.Media.SIZE,
                 MediaStore.Audio.Media.DURATION};
         String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
         musicCursor = getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, projection, selection, null, MediaStore.Audio.Media.TITLE + " ASC");
