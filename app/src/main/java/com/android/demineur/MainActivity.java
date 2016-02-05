@@ -230,6 +230,20 @@ public class MainActivity extends AppCompatActivity {
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
         final View scoreLayout = inflater.inflate(R.layout.score_layout, (ViewGroup) findViewById(R.id.scoreLayoutId)); // We need to inflate the layout in order to access its elements
         scoreDialog.setContentView(scoreLayout);
+        final TextView[] scoreTextViews = new TextView[9];
+        scoreTextViews[0] = (TextView) scoreLayout.findViewById(R.id.firstBeginnerScoreId);
+        scoreTextViews[1] = (TextView) scoreLayout.findViewById(R.id.secondBeginnerScoreId);
+        scoreTextViews[2] = (TextView) scoreLayout.findViewById(R.id.thirdBeginnerScoreId);
+        scoreTextViews[3] = (TextView) scoreLayout.findViewById(R.id.firstIntermediateScoreId);
+        scoreTextViews[4] = (TextView) scoreLayout.findViewById(R.id.secondIntermediateScoreId);
+        scoreTextViews[5] = (TextView) scoreLayout.findViewById(R.id.thirdIntermediateScoreId);
+        scoreTextViews[6] = (TextView) scoreLayout.findViewById(R.id.firstExpertScoreId);
+        scoreTextViews[7] = (TextView) scoreLayout.findViewById(R.id.secondExpertScoreId);
+        scoreTextViews[8] = (TextView) scoreLayout.findViewById(R.id.thirdExpertScoreId);
+        final TextView totalScoreTextView = (TextView) scoreLayout.findViewById(R.id.totalScoreId);
+        final TextView winScoreTextView = (TextView) scoreLayout.findViewById(R.id.winScoreId);
+        final TextView winPercentageScoreTextView = (TextView) scoreLayout.findViewById(R.id.percentageScoreId);
+        final String[] keys = {prefScoreBeginner, prefScoreIntermediate, prefScoreExpert};
         Button clearButton = (Button) scoreLayout.findViewById(R.id.clearButton);
         clearButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -237,31 +251,27 @@ public class MainActivity extends AppCompatActivity {
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putString(prefScoreBeginner, null).putString(prefScoreIntermediate, null).putString(prefScoreExpert, null).
                         putInt(prefGameWin, 0).putInt(prefGameTotal, 0).apply();
-
-            }
-        });
-        scoreDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialog) {
-                TextView[] scoreTextViews = new TextView[9];
-                scoreTextViews[0] = (TextView) scoreLayout.findViewById(R.id.firstBeginnerScoreId);
-                scoreTextViews[1] = (TextView) scoreLayout.findViewById(R.id.secondBeginnerScoreId);
-                scoreTextViews[2] = (TextView) scoreLayout.findViewById(R.id.thirdBeginnerScoreId);
-                scoreTextViews[3] = (TextView) scoreLayout.findViewById(R.id.firstIntermediateScoreId);
-                scoreTextViews[4] = (TextView) scoreLayout.findViewById(R.id.secondIntermediateScoreId);
-                scoreTextViews[5] = (TextView) scoreLayout.findViewById(R.id.thirdIntermediateScoreId);
-                scoreTextViews[6] = (TextView) scoreLayout.findViewById(R.id.firstExpertScoreId);
-                scoreTextViews[7] = (TextView) scoreLayout.findViewById(R.id.secondExpertScoreId);
-                scoreTextViews[8] = (TextView) scoreLayout.findViewById(R.id.thirdExpertScoreId);
-                String[] keys = {prefScoreBeginner, prefScoreIntermediate, prefScoreExpert};
                 for(int i = 0; i < keys.length; i++) {
                     String[] bestScores = getBestScores(keys[i]);
                     for(int j = 0; j < scoreTextViews.length / keys.length; j++)
                         scoreTextViews[i * keys.length + j].setText(bestScores[j]);
                 }
-                TextView totalScoreTextView = (TextView) scoreLayout.findViewById(R.id.totalScoreId);
-                TextView winScoreTextView = (TextView) scoreLayout.findViewById(R.id.winScoreId);
-                TextView winPercentageScoreTextView = (TextView) scoreLayout.findViewById(R.id.percentageScoreId);
+                int totalGameCount = preferences.getInt(prefGameTotal, 0);
+                int winGameCount = preferences.getInt(prefGameWin, 0);
+                double winPercentage = totalGameCount == 0 ? 0 : (double) winGameCount * 100 / (double) totalGameCount;
+                totalScoreTextView.setText(getResources().getString(R.string.scoreTotalLine, totalGameCount));
+                winScoreTextView.setText(getResources().getString(R.string.scoreWinLine, winGameCount));
+                winPercentageScoreTextView.setText(getResources().getString(R.string.scorePercentageLine, winPercentage));
+            }
+        });
+        scoreDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                for(int i = 0; i < keys.length; i++) {
+                    String[] bestScores = getBestScores(keys[i]);
+                    for(int j = 0; j < scoreTextViews.length / keys.length; j++)
+                        scoreTextViews[i * keys.length + j].setText(bestScores[j]);
+                }
                 int totalGameCount = preferences.getInt(prefGameTotal, 0);
                 int winGameCount = preferences.getInt(prefGameWin, 0);
                 double winPercentage = totalGameCount == 0 ? 0 : (double) winGameCount * 100 / (double) totalGameCount;
@@ -317,14 +327,17 @@ public class MainActivity extends AppCompatActivity {
                     bestScores = getBestScores(prefScoreExpert);
                 }
                 // Show the three best scores and make the new score line bold
+                boolean bold = false;
                 for(int i = 0; i < 3; i++) {
                     scores[i].setText(bestScores[i]);
                     String[] times = bestScores[i].substring(2).split(":");
                     if(times.length == 2) {
                         int min = Integer.parseInt(times[0]);
                         int sec = Integer.parseInt(times[1]);
-                        if(min * 60 + sec == model.getElapsedTime())
+                        if(min * 60 + sec == model.getElapsedTime() && !bold) {
                             scores[i].setTypeface(null, Typeface.BOLD);
+                            bold = true;
+                        }
                         else
                             scores[i].setTypeface(null, Typeface.NORMAL);
                     }
