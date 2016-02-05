@@ -94,15 +94,15 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/replayButtonId"
-            android:text="@string/yes"
+            android:id="@+id/notReplayButtonId"
+            android:text="@string/no"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             />
 
         <Button
-            android:id="@+id/notReplayButtonId"
-            android:text="@string/no"
+            android:id="@+id/replayButtonId"
+            android:text="@string/yes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             />

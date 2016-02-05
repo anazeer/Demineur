@@ -663,16 +663,17 @@ public class MainActivity extends AppCompatActivity {
                 return Integer.valueOf(a).compareTo(Integer.valueOf(b));
             }
         });
-        if(score == null) {
+        if(score == null)
             orderedScore.add(newScore);
-        }
         else {
             orderedScore.addAll(score);
             if(orderedScore.size() == 3 ) {
                 String higher = orderedScore.higher(newScore);
                 if(higher != null) {
-                    orderedScore.remove(orderedScore.last());
-                    orderedScore.add(newScore);
+                    if(!orderedScore.contains(newScore)) {
+                        orderedScore.remove(orderedScore.last());
+                        orderedScore.add(newScore);
+                    }
                 }
                 else
                     return false;
