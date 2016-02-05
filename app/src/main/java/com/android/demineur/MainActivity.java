@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Message;
@@ -84,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
      * Scores operations
      */
     private Dialog scoreDialog;
+    private Dialog winDialog;
 
     /**
      * Help operations
@@ -122,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         assert getSupportActionBar() != null; // Prevent from the possible NullPointerException warning
-        getSupportActionBar().setDisplayShowTitleEnabled(false); // Unshow game title in menu
+        getSupportActionBar().setDisplayShowTitleEnabled(false); // Un-show game title in the action bar
         setContentView(R.layout.grid_layout);
         gridLayout = (GridLayout) findViewById(R.id.gridId);
         flagButton = (ImageButton) findViewById(R.id.flagButtonId);
@@ -130,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
         minesCountText = (TextView) findViewById(R.id.minesId);
         timeText = (TextView) findViewById(R.id.timeId);
         replayDialog = new AlertDialog.Builder(this);
+        replayDialog.setTitle(getResources().getString(R.string.game_win));
         replayDialog.setMessage(getResources().getString(R.string.dialog_replay)).
                 setPositiveButton(getResources().getString(R.string.yes), settingsDialogListener).
                 setNegativeButton(getResources().getString(R.string.no), settingsDialogListener);
@@ -138,6 +141,7 @@ public class MainActivity extends AppCompatActivity {
         initModel();
         initSettingsDialog();
         initScoreDialog();
+        initNewBestScoreDialog();
         initHelpDialog();
         initMusicDialog();
     }
@@ -226,33 +230,120 @@ public class MainActivity extends AppCompatActivity {
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
         final View scoreLayout = inflater.inflate(R.layout.score_layout, (ViewGroup) findViewById(R.id.scoreLayoutId)); // We need to inflate the layout in order to access its elements
         scoreDialog.setContentView(scoreLayout);
-        scoreDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+        final TextView[] scoreTextViews = new TextView[9];
+        scoreTextViews[0] = (TextView) scoreLayout.findViewById(R.id.firstBeginnerScoreId);
+        scoreTextViews[1] = (TextView) scoreLayout.findViewById(R.id.secondBeginnerScoreId);
+        scoreTextViews[2] = (TextView) scoreLayout.findViewById(R.id.thirdBeginnerScoreId);
+        scoreTextViews[3] = (TextView) scoreLayout.findViewById(R.id.firstIntermediateScoreId);
+        scoreTextViews[4] = (TextView) scoreLayout.findViewById(R.id.secondIntermediateScoreId);
+        scoreTextViews[5] = (TextView) scoreLayout.findViewById(R.id.thirdIntermediateScoreId);
+        scoreTextViews[6] = (TextView) scoreLayout.findViewById(R.id.firstExpertScoreId);
+        scoreTextViews[7] = (TextView) scoreLayout.findViewById(R.id.secondExpertScoreId);
+        scoreTextViews[8] = (TextView) scoreLayout.findViewById(R.id.thirdExpertScoreId);
+        final TextView totalScoreTextView = (TextView) scoreLayout.findViewById(R.id.totalScoreId);
+        final TextView winScoreTextView = (TextView) scoreLayout.findViewById(R.id.winScoreId);
+        final TextView winPercentageScoreTextView = (TextView) scoreLayout.findViewById(R.id.percentageScoreId);
+        final String[] keys = {prefScoreBeginner, prefScoreIntermediate, prefScoreExpert};
+        Button clearButton = (Button) scoreLayout.findViewById(R.id.clearButton);
+        clearButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onShow(DialogInterface dialog) {
-                TextView[] scoreTextViews = new TextView[3];
-                scoreTextViews[0] = (TextView) scoreLayout.findViewById(R.id.firstBeginnerScoreId);
-                scoreTextViews[1] = (TextView) scoreLayout.findViewById(R.id.secondBeginnerScoreId);
-                scoreTextViews[2] = (TextView) scoreLayout.findViewById(R.id.thirdBeginnerScoreId);
-                updateModeScore(prefScoreBeginner, scoreTextViews);
-                scoreTextViews = new TextView[3];
-                scoreTextViews[0] = (TextView) scoreLayout.findViewById(R.id.firstIntermediateScoreId);
-                scoreTextViews[1] = (TextView) scoreLayout.findViewById(R.id.secondIntermediateScoreId);
-                scoreTextViews[2] = (TextView) scoreLayout.findViewById(R.id.thirdIntermediateScoreId);
-                updateModeScore(prefScoreIntermediate, scoreTextViews);
-                scoreTextViews = new TextView[3];
-                scoreTextViews[0] = (TextView) scoreLayout.findViewById(R.id.firstExpertScoreId);
-                scoreTextViews[1] = (TextView) scoreLayout.findViewById(R.id.secondExpertScoreId);
-                scoreTextViews[2] = (TextView) scoreLayout.findViewById(R.id.thirdExpertScoreId);
-                updateModeScore(prefScoreExpert, scoreTextViews);
-                TextView totalScoreTextView = (TextView) scoreLayout.findViewById(R.id.totalScoreId);
-                TextView winScoreTextView = (TextView) scoreLayout.findViewById(R.id.winScoreId);
-                TextView winPercentageScoreTextView = (TextView) scoreLayout.findViewById(R.id.percentageScoreId);
+            public void onClick(View v) {
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putString(prefScoreBeginner, null).putString(prefScoreIntermediate, null).putString(prefScoreExpert, null).
+                        putInt(prefGameWin, 0).putInt(prefGameTotal, 0).apply();
+                for(int i = 0; i < keys.length; i++) {
+                    String[] bestScores = getBestScores(keys[i]);
+                    for(int j = 0; j < scoreTextViews.length / keys.length; j++)
+                        scoreTextViews[i * keys.length + j].setText(bestScores[j]);
+                }
                 int totalGameCount = preferences.getInt(prefGameTotal, 0);
                 int winGameCount = preferences.getInt(prefGameWin, 0);
                 double winPercentage = totalGameCount == 0 ? 0 : (double) winGameCount * 100 / (double) totalGameCount;
                 totalScoreTextView.setText(getResources().getString(R.string.scoreTotalLine, totalGameCount));
                 winScoreTextView.setText(getResources().getString(R.string.scoreWinLine, winGameCount));
                 winPercentageScoreTextView.setText(getResources().getString(R.string.scorePercentageLine, winPercentage));
+            }
+        });
+        scoreDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                for(int i = 0; i < keys.length; i++) {
+                    String[] bestScores = getBestScores(keys[i]);
+                    for(int j = 0; j < scoreTextViews.length / keys.length; j++)
+                        scoreTextViews[i * keys.length + j].setText(bestScores[j]);
+                }
+                int totalGameCount = preferences.getInt(prefGameTotal, 0);
+                int winGameCount = preferences.getInt(prefGameWin, 0);
+                double winPercentage = totalGameCount == 0 ? 0 : (double) winGameCount * 100 / (double) totalGameCount;
+                totalScoreTextView.setText(getResources().getString(R.string.scoreTotalLine, totalGameCount));
+                winScoreTextView.setText(getResources().getString(R.string.scoreWinLine, winGameCount));
+                winPercentageScoreTextView.setText(getResources().getString(R.string.scorePercentageLine, winPercentage));
+            }
+        });
+    }
+
+    /**
+     * Initialize the new best score dialog interface
+     */
+    private void initNewBestScoreDialog() {
+        winDialog = new Dialog(this);
+        winDialog.setTitle(getResources().getString(R.string.game_win));
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
+        final View winLayout = inflater.inflate(R.layout.win_layout, (ViewGroup) findViewById(R.id.winLayoutId));
+        winDialog.setContentView(winLayout);
+        Button replayButton = (Button) winLayout.findViewById(R.id.replayButtonId);
+        Button notReplayButton = (Button) winLayout.findViewById(R.id.notReplayButtonId);
+        replayButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                newGame(model.getWidth(), model.getHeight(), model.getMines());
+                winDialog.dismiss();
+            }
+        });
+        notReplayButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                winDialog.dismiss();
+            }
+        });
+        winDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                TextView modeText = (TextView) winLayout.findViewById(R.id.modeTextId);
+                TextView []scores = new TextView[3];
+                scores[0] = (TextView) winLayout.findViewById(R.id.firstScoreId);
+                scores[1] = (TextView) winLayout.findViewById(R.id.secondScoreId);
+                scores[2] = (TextView) winLayout.findViewById(R.id.thirdScoreId);
+
+                String[] bestScores;
+                if (model.getWidth() == 9) {
+                    modeText.setText(getResources().getString(R.string.beginner));
+                    bestScores = getBestScores(prefScoreBeginner);
+                } else if (model.getWidth() == 16) {
+                    modeText.setText(getResources().getString(R.string.intermediate));
+                    bestScores = getBestScores(prefScoreIntermediate);
+                } else {
+                    modeText.setText(getResources().getString(R.string.expert));
+                    bestScores = getBestScores(prefScoreExpert);
+                }
+                // Show the three best scores and make the new score line bold
+                boolean bold = false;
+                for(int i = 0; i < 3; i++) {
+                    scores[i].setText(bestScores[i]);
+                    String[] times = bestScores[i].substring(2).split(":");
+                    if(times.length == 2) {
+                        int min = Integer.parseInt(times[0]);
+                        int sec = Integer.parseInt(times[1]);
+                        if(min * 60 + sec == model.getElapsedTime() && !bold) {
+                            scores[i].setTypeface(null, Typeface.BOLD);
+                            bold = true;
+                        }
+                        else
+                            scores[i].setTypeface(null, Typeface.NORMAL);
+                    }
+                    else
+                        scores[i].setTypeface(null, Typeface.NORMAL);
+                }
             }
         });
     }
@@ -521,15 +612,16 @@ public class MainActivity extends AppCompatActivity {
      * Show the winning dialog and replay buttons
      */
     private void win() {
-        updateScore();
-        String result = model.isWon() ? getResources().getString(R.string.won) : getResources().getString(R.string.lost);
-        Toast.makeText(MainActivity.this, getResources().getString(R.string.result, result), Toast.LENGTH_SHORT).show();
-        replayDialog.setTitle(getResources().getString(R.string.result, result));
+        boolean updated = updateScore();
+        Toast.makeText(MainActivity.this, getResources().getString(R.string.game_win), Toast.LENGTH_SHORT).show();
         SharedPreferences.Editor edit = preferences.edit();
         edit.putInt(prefGameWin, preferences.getInt(prefGameWin, 0) + 1);
         edit.putInt(prefGameTotal, preferences.getInt(prefGameTotal, 0) + 1);
         edit.apply();
-        replayDialog.show();
+        if(updated)
+            winDialog.show();
+        else
+            replayDialog.show();
     }
 
     /**
@@ -547,7 +639,11 @@ public class MainActivity extends AppCompatActivity {
         preferences.edit().putInt(prefGameTotal, preferences.getInt(prefGameTotal, 0) + 1).apply();
     }
 
-    private void updateScore() {
+    /**
+     * Update high score
+     * @return true if scores have been updated
+     */
+    private boolean updateScore() {
         String key = null;
         if(model.getWidth() == 9 && model.getHeight() == 9 && model.getMines() == 10) {
             key = prefScoreBeginner;
@@ -559,7 +655,7 @@ public class MainActivity extends AppCompatActivity {
             key = prefScoreExpert;
         }
         if(key == null)
-            return;
+            return false;
         String newScore = model.getElapsedTime() + "";
         Set<String> score = preferences.getStringSet(key, null);
         TreeSet<String> orderedScore = new TreeSet<>(new Comparator<String>(){
@@ -578,23 +674,27 @@ public class MainActivity extends AppCompatActivity {
                     orderedScore.remove(orderedScore.last());
                     orderedScore.add(newScore);
                 }
+                else
+                    return false;
             }
             else
                 orderedScore.add(newScore);
         }
         preferences.edit().putStringSet(key, orderedScore).apply();
+        return true;
     }
 
     /**
-     * Update the given mode score display in the score dialog
+     * Update the given mode score displayed in the score dialog
      * @param key : the mode key
-     * @param scoreTextViews : the three textviews to update
+     * @return the string array containing the three best scores in the given mode
      */
-    private void updateModeScore(String key, TextView[] scoreTextViews) {
+    private String[] getBestScores(String key) {
         Set<String> scores = preferences.getStringSet(key, null);
+        String[] result = new String[3];
         if(scores == null)
             for(int i = 0; i < 3; i++)
-                scoreTextViews[i].setText(getResources().getString(R.string.noScore));
+                result[i] = getResources().getString(R.string.noScore);
         else {
             TreeSet<String> orderedScore = new TreeSet<>(new Comparator<String>(){
                 public int compare(String a, String b){
@@ -605,13 +705,14 @@ public class MainActivity extends AppCompatActivity {
             int i = 0;
             for(String score : orderedScore) {
                 int intScore = Integer.parseInt(score);
-                scoreTextViews[i].setText(getResources().getString(R.string.timer, intScore / 60, intScore % 60));
+                result[i] = getResources().getString(R.string.timer, intScore / 60, intScore % 60);
                 i++;
             }
             for(; i < 3; i++) {
-                scoreTextViews[i].setText(getResources().getString(R.string.noScore));
+               result[i] = getResources().getString(R.string.noScore);
             }
         }
+        return result;
     }
 
     @Override
@@ -829,7 +930,7 @@ public class MainActivity extends AppCompatActivity {
         }
         else
             jokerItem.setIcon(R.drawable.joker);
-        if(model.isSafeJokerUsed()) {
+        if(model.isSafeJokerUsed() || model.isWon() || model.isLost()) {
             safeJokerItem.setIcon(R.drawable.croix);
             safeJokerItem.setEnabled(false);
         }
@@ -837,7 +938,7 @@ public class MainActivity extends AppCompatActivity {
             safeJokerItem.setIcon(null);
             safeJokerItem.setEnabled(true);
         }
-        if(model.isBurstJokerUsed()){
+        if(model.isBurstJokerUsed() || model.isWon() || model.isLost()){
             burstJokerItem.setIcon(R.drawable.croix);
             burstJokerItem.setEnabled(false);
         }

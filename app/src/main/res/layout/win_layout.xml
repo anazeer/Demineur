@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/winLayoutId"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.android.demineur.MainActivity"
+    >
+
+    <TextView
+        android:id="@+id/newScoreLayoutId"
+        android:text="@string/newScore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="32dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="20dp"
+        android:textAppearance="@style/TitleScoreText"
+        android:drawableStart="@drawable/new_score"
+        android:drawableLeft="@drawable/new_score"
+        />
+
+    <TextView
+        android:id="@+id/modeTextId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="32dp"
+        android:layout_marginStart="32dp"
+        android:textAppearance="@style/TitleScoreText"
+        android:layout_below="@+id/newScoreLayoutId"
+        />
+
+    <TextView
+        android:id="@+id/firstScoreId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:drawableStart="@drawable/bombe1"
+        android:drawableLeft="@drawable/bombe1"
+        android:layout_below="@+id/modeTextId"
+        />
+
+    <TextView
+        android:id="@+id/secondScoreId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:drawableStart="@drawable/bombe2"
+        android:drawableLeft="@drawable/bombe2"
+        android:layout_below="@+id/firstScoreId"
+        />
+
+    <TextView
+        android:id="@+id/thirdScoreId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:drawableStart="@drawable/bombe3"
+        android:drawableLeft="@drawable/bombe3"
+        android:layout_below="@+id/secondScoreId"
+        />
+
+    <TextView
+        android:id="@+id/replayTextId"
+        android:text="@string/dialog_replay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:layout_below="@+id/thirdScoreId"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="22dp"
+        android:layout_marginStart="22dp"
+        />
+
+    <Button
+        android:id="@+id/replayButtonId"
+        android:text="@string/yes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/replayTextId"
+        />
+
+    <Button
+        android:id="@+id/notReplayButtonId"
+        android:text="@string/no"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/replayTextId"
+        android:layout_toLeftOf="@id/replayButtonId"
+        android:layout_toStartOf="@id/replayButtonId"
+        />
+
+</RelativeLayout>
