@@ -54,7 +54,7 @@
     <string name="music_pref_summary">Automatically resume last music</string>
 
     <string name="score">Score</string>
-    <string name="newScore">New score !</string>
+    <string name="newScore">"  "New score !</string>
     <string name="noScore">"  No best score yet"</string>
     <string name="total">Total</string>
     <string name="scoreTotalLine">Games played : %d</string>

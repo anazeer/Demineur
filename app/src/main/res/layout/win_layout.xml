@@ -8,6 +8,10 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:layout_marginLeft="12dp"
+    android:layout_marginStart="12dp"
+    android:layout_marginRight="12dp"
+    android:layout_marginEnd="12dp"
     tools:context="com.android.demineur.MainActivity"
     >
 
@@ -16,9 +20,9 @@
         android:text="@string/newScore"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="32dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="12dp"
+        android:gravity="center_vertical"
+        android:layout_centerHorizontal="true"
         android:textAppearance="@style/TitleScoreText"
         android:drawableStart="@drawable/new_score"
         android:drawableLeft="@drawable/new_score"
@@ -28,8 +32,10 @@
         android:id="@+id/modeTextId"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="32dp"
-        android:layout_marginStart="32dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginLeft="48dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginBottom="6dp"
         android:textAppearance="@style/TitleScoreText"
         android:layout_below="@+id/newScoreLayoutId"
         />
@@ -39,6 +45,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
+        android:layout_marginLeft="12dp"
         android:drawableStart="@drawable/bombe1"
         android:drawableLeft="@drawable/bombe1"
         android:layout_below="@+id/modeTextId"
@@ -49,6 +56,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
+        android:layout_marginLeft="12dp"
         android:drawableStart="@drawable/bombe2"
         android:drawableLeft="@drawable/bombe2"
         android:layout_below="@+id/firstScoreId"
@@ -59,6 +67,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
+        android:layout_marginLeft="12dp"
         android:drawableStart="@drawable/bombe3"
         android:drawableLeft="@drawable/bombe3"
         android:layout_below="@+id/secondScoreId"
@@ -69,31 +78,34 @@
         android:text="@string/dialog_replay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
         android:layout_below="@+id/thirdScoreId"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="22dp"
-        android:layout_marginStart="22dp"
+        android:textAppearance="@style/SettingsText"
         />
 
-    <Button
-        android:id="@+id/replayButtonId"
-        android:text="@string/yes"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/replayTextId"
-        />
-
-    <Button
-        android:id="@+id/notReplayButtonId"
-        android:text="@string/no"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/scoreLayoutId"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/replayTextId"
-        android:layout_toLeftOf="@id/replayButtonId"
-        android:layout_toStartOf="@id/replayButtonId"
-        />
+        android:gravity="center"
+        android:orientation="horizontal">
 
+        <Button
+            android:id="@+id/replayButtonId"
+            android:text="@string/yes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+
+        <Button
+            android:id="@+id/notReplayButtonId"
+            android:text="@string/no"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+
+    </LinearLayout>
 </RelativeLayout>
