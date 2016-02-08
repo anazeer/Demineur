@@ -7,11 +7,11 @@
     <string name="beginner">Débutant</string>
     <string name="intermediate">Intermédiaire</string>
     <string name="expert">Expert</string>
-    <string name="random">Hasard</string>
+    <string name="random">Aléatoire</string>
     <string name="new_custom">Personnaliser&#8230;</string>
 
     <string name="dialog_replay">Voulez-vous rejouer ?</string>
-    <string name="game_win">You win!</string>
+    <string name="game_win">Victoire !</string>
     <string name="restart_game">Recommencer</string>
 
     <string name="lost">perdu</string>
@@ -53,7 +53,7 @@
     <string name="music_pref_summary">Reprendre la dernière musique à la reprise du jeu</string>
 
     <string name="score">Score</string>
-    <string name="newScore">"  "Nouveau score !</string>
+    <string name="newScore">"  "Nouveau record !</string>
     <string name="noScore">"  Pas de score"</string>
     <string name="total">Total</string>
     <string name="scoreTotalLine">Parties jouées : %d</string>
