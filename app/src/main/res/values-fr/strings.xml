@@ -1,0 +1,97 @@
+<resources>
+    <string name="app_name">Demineur</string>
+    <string name="settings">Paramètres</string>
+
+    <string name="menu">Menu</string>
+    <string name="new_game">Nouveau jeu</string>
+    <string name="beginner">Débutant</string>
+    <string name="intermediate">Intermédiaire</string>
+    <string name="expert">Expert</string>
+    <string name="random">Hasard</string>
+    <string name="new_custom">Personnaliser&#8230;</string>
+
+    <string name="dialog_replay">Voulez-vous rejouer ?</string>
+    <string name="game_win">You win!</string>
+    <string name="restart_game">Recommencer</string>
+
+    <string name="lost">perdu</string>
+    <string name="won">gagné</string>
+    <string name="yes">Oui</string>
+    <string name="no">Non</string>
+    <string name="accept">Accepter</string>
+    <string name="cancel">Annuler</string>
+
+    <string name="width">Largeur: </string>
+    <string name="height">Hauteur: </string>
+    <string name="mines">Mines: </string>
+    <string name="width_value">%d</string>
+    <string name="height_value">%d</string>
+    <string name="mines_value">%d</string>
+    <string name="timer">"  "%1$02d:%2$02d</string>
+    <string name="count_mines">" "%d</string>
+
+    <string name="joker">Joker</string>
+    <string name="safeMode">Coup sûr</string>
+    <string name="safeModeActivated">Joker coup sûr activé</string>
+    <string name="burstMode">Coup puissant</string>
+    <string name="burstModeActivated">Joker coup puissant activé</string>
+
+    <string name="grid_preference">Grille</string>
+    <string name="grid_size_pref_title">Mode par défaut</string>
+    <string name="grid_size_pref_summary">Choisissez le mode de jeu par défaut</string>
+    <string name="anim_pref_title">Animation</string>
+    <string name="anim_pref_summary">Utiliser les animations en jeu</string>
+    <string name="vibration_pref_title">Vibration</string>
+    <string name="vibration_pref_summary">Utiliser la vibration en jeu</string>
+
+    <string name="musicDialog">Choix de la musique</string>
+    <string name="music">Musique</string>
+    <string name="resumeMusic">Reprendre</string>
+    <string name="pauseMusic">Pause</string>
+    <string name="stopMusic">Arrêter</string>
+    <string name="music_pref_title">Reprendre la musique</string>
+    <string name="music_pref_summary">Reprendre la dernière musique à la reprise du jeu</string>
+
+    <string name="score">Score</string>
+    <string name="newScore">"  "Nouveau score !</string>
+    <string name="noScore">"  Pas de score"</string>
+    <string name="total">Total</string>
+    <string name="scoreTotalLine">Parties jouées : %d</string>
+    <string name="scoreWinLine">Parties gagnées : %d</string>
+    <string name="scorePercentageLine">Taux de victoire : %.2f%%</string>
+    <string name="clear">Effacer</string>
+
+    <string name="flagDesc">Activer/désactiver le mode drapeau</string>
+    <string name="gameDesc">Interface du jeu</string>
+
+    <string name="help">Aide</string>
+    <string name="helpRuleTitle">But du jeu</string>
+    <string name="helpRule">"Le but du jeu est de dévoiler toutes les cases qui ne sont pas des mines, aussi vite que possible. Si vous dévoilez une mine, la partie est perdue."</string>
+    <string name="helpGameTitle">1) Nouvelle partie</string>
+    <string name="helpGame">"Vous pouvez choisir la dimension de la grille en ouvrant le menu Nouvelle partie après avoir cliqué sur le bouton +. Le mode débutant est le mode par défaut.
+        L'option hasard génère une grille aux dimensions aléatoires et l'option personnaliser vous permet d'entrer manuellement les dimensions de la grille. Notez que les scores obtenus dans ces deux derniers modes n'apparaîtrons pas dans le menu des scores."</string>
+    <string name="helpPlayTitle">2) Commencer une partie (timer)</string>
+    <string name="helpPlay">"Vous pouvez commencer la partie de plusieurs façons différentes. Vous pouvez jouer sur une case au hasard, poser un drapeau ou encore utiliser un joker (voir la section sur les jokers).
+        Chacune de ces actions démarre l\'horloge du jeu."</string>
+    <string name="helpReplayTitle">3) Recommencer</string>
+    <string name="helpReplay">"Vous pouvez recommencer une nouvelle partie avec des dimensions de grille identiques à l\'aide du bouton redémarrer, par exemple après une défaite."</string>
+    <string name="helpFlagTitle">4) Mode drapeau</string>
+    <string name="helpFlag">"Si vous pensez qu\'une case contient une mine, vous pouvez la marquer à l\'aide d\'un drapeau. Il existe deux façons de procéder :
+        - En cliquant sur le bouton drapeau. Une couleur rouge indique que vous êtes déjà en mode drapeau.
+        - En effectuant une longue pression sur une case. Une courte vibration confirmera alors l\'action, à condition que vous n\'ayez pas désactivé les vibrations dans les paramètres."
+    </string>
+    <string name="helpJokerTitle">5) Mode joker</string>
+    <string name="helpJoker">"Vous pouvez utiliser des jokers si vous êtes bloqués !\nL'étoile sur la barre des menus ouvre le menu des jokers.\nIl existe deux jokers :
+          - Coup sûr : votre prochain mouvement sera sûr. Si la case jouée s'avérait être une mine, un drapeau sera posé au lieu de l'exploser !
+          - Coup puissant : c'est un coup puissant qui dévoile toutes les cases voisines à celle jouée ! Un drapeau est posé pour chacune des cases qui étaient des mines.
+        Lorsque vous activez un joker, l'étoile devient jaune. Vous pouvez annuler la sélection d'un joker pour l'activer plus tard en appuyant sur le bouton drapeau.
+        Les jokers ont un usage unique, alors réfléchissez bien avant de les utiliser !"
+    </string>
+    <string name="helpScoreTitle">6) Menu des scores</string>
+    <string name="helpScore">"Vous pouvez accéder à vos trois meilleurs scores pour chacun des modes Débutant, Intermédiaire et Expert. Vous avez aussi accès au nombre total de parties finies, dont le nombre de victoires.
+        Afin de ne pas vous décourager, nous n'affichons pas le nombre de défaites :)"</string>
+    <string name="helpMusicTitle">7) Jouer de la musique</string>
+    <string name="helpMusic">"Afin de rendre vos parties moins monotones, vous pouvez choisir de jouer avec vos chansons favorites ! Pour choisir une chanson, ouvrez le menu principal à l'aide du bouton +, puis ouvrez le menu musique."</string>
+    <string name="glhf">Bonne chance !</string>
+
+</resources>
